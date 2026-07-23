@@ -59,8 +59,8 @@ export class PayMongoProvider implements PaymentProvider {
             // Trim to what the account has activated if a type errors.
             payment_method_types: ["card", "gcash", "paymaya", "qrph"],
             reference_number: referenceNumber,
-            success_url: `${this.origin}/?checkout=success`,
-            cancel_url: `${this.origin}/?checkout=cancelled`,
+            success_url: `${this.origin}/checkout/success?ref=${referenceNumber}`,
+            cancel_url: `${this.origin}/checkout/cancelled`,
             send_email_receipt: true,
           },
         },
