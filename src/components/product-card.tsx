@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { GarmentArt } from "./garment-art";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
-import { peso, SIZES, type Product, type Size } from "@/lib/products";
+import { money, SIZES, type Product, type Size } from "@/lib/products";
 
 interface ProductCardProps {
   product: Product;
@@ -117,9 +117,9 @@ export function ProductCard({ product, fig }: ProductCardProps) {
           <p className="mt-1 text-xs text-muted">{product.blurb}</p>
         </div>
         <div className="text-right">
-          <p className="text-sm font-medium">{peso(product.price)}</p>
+          <p className="text-sm font-medium">{money(product.price)}</p>
           {product.compareAt && (
-            <p className="text-xs text-muted line-through">{peso(product.compareAt)}</p>
+            <p className="text-xs text-muted line-through">{money(product.compareAt)}</p>
           )}
         </div>
       </div>

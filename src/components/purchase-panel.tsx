@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
-import { peso, SIZES, type Product, type Size } from "@/lib/products";
+import { money, SIZES, type Product, type Size } from "@/lib/products";
 
 /** The interactive slice of a product page: size choice, bag, and saving. */
 export function PurchasePanel({ product }: { product: Product }) {
@@ -60,7 +60,7 @@ export function PurchasePanel({ product }: { product: Product }) {
           onClick={handleAdd}
           className="inline-flex h-12 items-center rounded-full bg-foreground px-8 text-sm text-background hover:scale-105 transition-transform duration-300 [transition-timing-function:var(--ease-spring)] cursor-pointer"
         >
-          Add to bag · {peso(product.price)}
+          Add to bag · {money(product.price)}
         </button>
         <button
           type="button"

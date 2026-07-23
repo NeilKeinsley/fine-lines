@@ -3,6 +3,7 @@ import { z } from "zod";
 import { catalog } from "@/lib/catalog";
 import { SIZES } from "@/lib/products";
 import { paymongo } from "@/lib/payments/paymongo";
+import { orderStore } from "@/lib/orders";
 import type { CheckoutItem } from "@/lib/payments/provider";
 
 /*
@@ -56,7 +57,7 @@ export async function POST(request: Request) {
       name: product.name,
       size: line.size,
       qty: line.qty,
-      unitAmount: product.price * 100, // PHP centavos, from the catalog only
+      unitAmount: product.price * 100, // USD cents, from the catalog only
     });
   }
 
@@ -64,8 +65,12 @@ export async function POST(request: Request) {
 
   try {
     const session = await paymongo.createCheckoutSession(items, referenceNumber);
-    // TODO(phase 2, DB): persist a pending order {referenceNumber, provider,
-    // providerRef, items, total} once Railway Postgres is provisioned.
+    await orderStore.createPending(
+      session,
+      referenceNumber,
+      items,
+      session.chargedAmount
+    );
     return NextResponse.json({ url: session.redirectUrl });
   } catch (err) {
     console.error("checkout session failed:", err);

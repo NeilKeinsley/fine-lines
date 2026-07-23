@@ -41,7 +41,7 @@ export const PRODUCTS: Product[] = [
     name: "Meridian Tee",
     category: "Tops",
     garment: "tee",
-    price: 1290,
+    price: 29,
     badge: "Studio favourite",
     blurb:
       "Heavyweight combed cotton with a set-in sleeve. Garment-dyed, so expect slight variation between runs.",
@@ -51,7 +51,7 @@ export const PRODUCTS: Product[] = [
     name: "Half-Tuck Oxford",
     category: "Tops",
     garment: "shirt",
-    price: 2450,
+    price: 49,
     blurb: "Washed until the collar rolls soft.",
   },
   {
@@ -59,7 +59,7 @@ export const PRODUCTS: Product[] = [
     name: "Chore Jacket No. 4",
     category: "Outerwear",
     garment: "jacket",
-    price: 4980,
+    price: 89,
     badge: "New",
     blurb: "Three patch pockets in 10 oz brushed twill.",
   },
@@ -68,8 +68,8 @@ export const PRODUCTS: Product[] = [
     name: "Duster Coat",
     category: "Outerwear",
     garment: "coat",
-    price: 6750,
-    compareAt: 7900,
+    price: 120,
+    compareAt: 145,
     badge: "Sale",
     blurb: "Floor-skimming, with a placket you have to look twice to find.",
   },
@@ -78,7 +78,7 @@ export const PRODUCTS: Product[] = [
     name: "Bias-Cut Slip Dress",
     category: "Dresses",
     garment: "dress",
-    price: 3890,
+    price: 69,
     badge: "New",
     blurb: "Cut on the bias so the drape does the talking.",
   },
@@ -87,7 +87,7 @@ export const PRODUCTS: Product[] = [
     name: "Pleat-Line Midi Skirt",
     category: "Bottoms",
     garment: "skirt",
-    price: 2780,
+    price: 49,
     blurb: "Knife pleats, pressed permanent.",
   },
   {
@@ -95,7 +95,7 @@ export const PRODUCTS: Product[] = [
     name: "Wide-Leg Trousers",
     category: "Bottoms",
     garment: "trousers",
-    price: 3150,
+    price: 59,
     badge: "Studio favourite",
     blurb: "High rise and a deep front pleat. Full break at the hem, so plan your shoes accordingly.",
   },
@@ -104,7 +104,7 @@ export const PRODUCTS: Product[] = [
     name: "Ribline Crewneck",
     category: "Knitwear",
     garment: "sweater",
-    price: 3420,
+    price: 65,
     blurb: "Merino blend with a wide rib at every edge.",
   },
   {
@@ -112,8 +112,8 @@ export const PRODUCTS: Product[] = [
     name: "Boxy Linen Shirt",
     category: "Tops",
     garment: "shirt",
-    price: 2190,
-    compareAt: 2590,
+    price: 39,
+    compareAt: 47,
     badge: "Sale",
     blurb: "European flax, cropped and boxy. Wrinkles are part of the deal.",
   },
@@ -122,7 +122,7 @@ export const PRODUCTS: Product[] = [
     name: "Tailored Blazer",
     category: "Outerwear",
     garment: "blazer",
-    price: 5890,
+    price: 105,
     blurb: "Soft shoulder, one horn button.",
   },
   {
@@ -130,7 +130,7 @@ export const PRODUCTS: Product[] = [
     name: "A-Line Shirt Dress",
     category: "Dresses",
     garment: "dress",
-    price: 3290,
+    price: 59,
     blurb: "Belted poplin with a skirt that swings.",
   },
   {
@@ -138,10 +138,12 @@ export const PRODUCTS: Product[] = [
     name: "Selvedge Straight Jean",
     category: "Bottoms",
     garment: "trousers",
-    price: 3680,
+    price: 75,
     blurb: "14 oz Japanese selvedge, chain-stitched at the hem. Stiff for the first two weeks, then it gives in.",
   },
 ];
 
-export const peso = (n: number) =>
-  "₱" + n.toLocaleString("en-PH", { maximumFractionDigits: 0 });
+/* USD-first pricing (Neil, 2026-07-24). PayMongo settles in PHP; the
+   provider converts at checkout using PHP_PER_USD. */
+export const money = (n: number) =>
+  "$" + n.toLocaleString("en-US", { maximumFractionDigits: 0 });

@@ -11,7 +11,7 @@ export interface CheckoutItem {
   name: string;
   size: Size;
   qty: number;
-  /** Unit price in PHP centavos, recomputed server-side from the catalog. */
+  /** Unit price in USD cents, recomputed server-side from the catalog. */
   unitAmount: number;
 }
 
@@ -21,6 +21,9 @@ export interface CheckoutSession {
   providerRef: string;
   /** Hosted payment page the shopper is redirected to. */
   redirectUrl: string;
+  /** What the gateway was actually asked to charge (settlement currency). */
+  chargedAmount: number;
+  chargedCurrency: string;
 }
 
 export interface PaymentProvider {

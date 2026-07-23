@@ -18,11 +18,14 @@ export class PayMongoProvider implements PaymentProvider {
   private readonly secretKey: string | undefined;
   private readonly webhookSecret: string | undefined;
   private readonly origin: string;
+  /** Store prices are USD; PayMongo settles PHP only, so we convert. */
+  private readonly phpPerUsd: number;
 
   constructor(env: NodeJS.ProcessEnv = process.env) {
     this.secretKey = env.PAYMONGO_SECRET_KEY || undefined;
     this.webhookSecret = env.PAYMONGO_WEBHOOK_SECRET || undefined;
     this.origin = env.NEXT_PUBLIC_SITE_ORIGIN || "http://localhost:3000";
+    this.phpPerUsd = Number(env.PHP_PER_USD) || 58;
   }
 
   isConfigured(): boolean {
@@ -48,7 +51,8 @@ export class PayMongoProvider implements PaymentProvider {
           attributes: {
             line_items: items.map((item) => ({
               name: `${item.name} (${item.size})`,
-              amount: item.unitAmount,
+              // USD cents → PHP centavos at the configured rate.
+              amount: Math.round(item.unitAmount * this.phpPerUsd),
               currency: "PHP",
               quantity: item.qty,
             })),
@@ -72,10 +76,17 @@ export class PayMongoProvider implements PaymentProvider {
       data: { id: string; attributes: { checkout_url: string } };
     };
 
+    const chargedAmount = items.reduce(
+      (sum, item) => sum + Math.round(item.unitAmount * this.phpPerUsd) * item.qty,
+      0
+    );
+
     return {
       provider: this.name,
       providerRef: json.data.id,
       redirectUrl: json.data.attributes.checkout_url,
+      chargedAmount,
+      chargedCurrency: "PHP",
     };
   }
 

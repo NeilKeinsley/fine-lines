@@ -34,14 +34,15 @@ export function Craft() {
             <div>
               <p className="font-display text-2xl italic text-accent">Paying is your call</p>
               <p className="mt-3 text-sm leading-relaxed text-muted">
-                Cards, GCash, Maya, QR Ph. The payment page will be hosted by
-                a PCI-compliant gateway, so card numbers never reach us.
+                Visa, Mastercard, PayPal, QR Ph. The payment page will be
+                hosted by a PCI-compliant gateway, so card numbers never
+                reach us.
               </p>
             </div>
           </Reveal>
           <Reveal delay={280} className="flex-1 px-8 py-10">
             <div>
-              <p className="font-display text-2xl italic text-accent">₱2,995 ships free</p>
+              <p className="font-display text-2xl italic text-accent">$60 ships free</p>
               <p className="mt-3 text-sm leading-relaxed text-muted">
                 Under that, shipping is at cost. Returns get 30 days.
               </p>

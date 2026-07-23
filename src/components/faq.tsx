@@ -7,7 +7,7 @@ const QA = [
   },
   {
     q: "How will I pay?",
-    a: "Visa, Mastercard, GCash, Maya, or a QR Ph bank transfer, all through a hosted PCI-compliant payment page, so your card details never touch our servers. Cash on delivery for Metro Manila is on the list too.",
+    a: "Visa, Mastercard, PayPal, or a QR Ph bank transfer, all through a hosted PCI-compliant payment page, so your card details never touch our servers. Cash on delivery for Metro Manila is on the list too.",
   },
   {
     q: "Do I need an account to order?",
@@ -15,7 +15,7 @@ const QA = [
   },
   {
     q: "What about shipping?",
-    a: "Free nationwide over ₱2,995. Metro Manila usually lands in 1 to 3 days, provincial in 3 to 7. You get a tracking link the moment the parcel leaves the studio.",
+    a: "Free over $60, anywhere in the Philippines. Metro Manila usually lands in 1 to 3 days, provincial in 3 to 7. You get a tracking link the moment the parcel leaves the studio.",
   },
   {
     q: "Returns and exchanges?",

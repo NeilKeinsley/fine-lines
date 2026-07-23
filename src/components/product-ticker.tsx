@@ -1,6 +1,6 @@
 import { GarmentArt } from "./garment-art";
 import { catalog } from "@/lib/catalog";
-import { peso } from "@/lib/products";
+import { money } from "@/lib/products";
 
 /**
  * ProductTicker: the collection drifting right-to-left as a preview rail.
@@ -36,7 +36,7 @@ export function ProductTicker() {
                       {product.name}
                     </span>
                     <span className="mt-0.5 text-xs text-accent">
-                      {peso(product.price)}
+                      {money(product.price)}
                     </span>
                   </span>
                 </a>

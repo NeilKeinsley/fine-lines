@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { GarmentArt } from "./garment-art";
 import { useCart } from "@/lib/cart";
 import { Bag } from "@/lib/bag";
-import { peso } from "@/lib/products";
+import { money } from "@/lib/products";
 
 export function CartDrawer() {
   const { lines, isOpen, close, setQty, remove } = useCart();
@@ -89,7 +89,7 @@ export function CartDrawer() {
         <div className="border-b border-line px-6 py-3">
           <p className="text-[11px] tracking-[0.14em] uppercase text-muted">
             {bag.amountToFreeShipping > 0
-              ? `${peso(bag.amountToFreeShipping)} more and shipping's on us`
+              ? `${money(bag.amountToFreeShipping)} more and shipping's on us`
               : "Shipping's on us"}
           </p>
           <div className="mt-2 h-px w-full bg-line">
@@ -129,7 +129,7 @@ export function CartDrawer() {
                     <div className="flex flex-1 flex-col">
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="font-display text-[15px] leading-snug">{p.name}</h3>
-                        <p className="text-sm">{peso(p.price * line.qty)}</p>
+                        <p className="text-sm">{money(p.price * line.qty)}</p>
                       </div>
                       <p className="mt-0.5 text-xs text-muted">
                         {p.category} · Size {line.size}
@@ -174,7 +174,7 @@ export function CartDrawer() {
           <footer className="border-t border-line px-6 py-5">
             <div className="mb-1 flex items-center justify-between text-sm">
               <span className="text-muted">Subtotal</span>
-              <span className="font-medium">{peso(bag.subtotal)}</span>
+              <span className="font-medium">{money(bag.subtotal)}</span>
             </div>
             <p className="mb-4 text-[11px] text-muted">
               Shipping &amp; taxes calculated at checkout.
@@ -185,17 +185,17 @@ export function CartDrawer() {
               className="w-full rounded-full bg-foreground py-3.5 text-sm text-background hover:scale-[1.02] transition-transform duration-300 [transition-timing-function:var(--ease-spring)] cursor-pointer disabled:opacity-60"
               onClick={startCheckout}
             >
-              {checkingOut ? "Opening checkout…" : `Checkout · ${peso(bag.subtotal)}`}
+              {checkingOut ? "Opening checkout…" : `Checkout · ${money(bag.subtotal)}`}
             </button>
             {checkoutNote && (
               <p className="mt-3 border border-line bg-card px-4 py-3 text-xs leading-relaxed text-muted">
-                The register isn&apos;t open yet. We&apos;re wiring up cards,
-                GCash, Maya, and QR Ph now, and your bag will keep everything
-                saved until launch.
+                The register isn&apos;t open yet. We&apos;re wiring up Visa,
+                Mastercard, PayPal, and QR Ph now, and your bag will keep
+                everything saved until launch.
               </p>
             )}
             <p className="mt-3 text-center text-[10px] tracking-[0.14em] uppercase text-muted">
-              Visa · Mastercard · GCash · Maya · QR Ph
+              Visa · Mastercard · PayPal · Stripe · QR Ph
             </p>
           </footer>
         )}

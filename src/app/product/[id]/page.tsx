@@ -8,7 +8,7 @@ import { GarmentArt } from "@/components/garment-art";
 import { PurchasePanel } from "@/components/purchase-panel";
 import { Reveal } from "@/components/reveal";
 import { catalog } from "@/lib/catalog";
-import { peso } from "@/lib/products";
+import { money } from "@/lib/products";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 interface PageProps {
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!product) return {};
   return {
     title: product.name,
-    description: `${product.blurb} ${product.category} from ${SITE_NAME}, ${peso(product.price)}. Drawn in Manila, sewn in short runs.`,
+    description: `${product.blurb} ${product.category} from ${SITE_NAME}, ${money(product.price)}. Drawn in Manila, sewn in short runs.`,
     alternates: { canonical: `/product/${product.id}` },
     openGraph: {
       title: `${product.name} | ${SITE_NAME}`,
@@ -55,7 +55,7 @@ export default async function ProductPage({ params }: PageProps) {
     brand: { "@type": "Brand", name: SITE_NAME },
     offers: {
       "@type": "Offer",
-      priceCurrency: "PHP",
+      priceCurrency: "USD",
       price: product.price,
       availability: "https://schema.org/PreOrder",
       url: `${SITE_URL}/product/${product.id}`,
@@ -121,10 +121,10 @@ export default async function ProductPage({ params }: PageProps) {
                   {product.name}
                 </h1>
                 <div className="mt-3 flex items-baseline gap-3">
-                  <p className="text-xl font-medium">{peso(product.price)}</p>
+                  <p className="text-xl font-medium">{money(product.price)}</p>
                   {product.compareAt && (
                     <p className="text-sm text-muted line-through">
-                      {peso(product.compareAt)}
+                      {money(product.compareAt)}
                     </p>
                   )}
                 </div>
@@ -139,7 +139,7 @@ export default async function ProductPage({ params }: PageProps) {
                 <div className="my-8 h-px w-full bg-line" />
 
                 <ul className="space-y-2 text-sm text-muted">
-                  <li>Free shipping over ₱2,995 · returns within 30 days</li>
+                  <li>Free shipping over $60 · returns within 30 days</li>
                   <li>Seams chain-stitched where they take strain; repairs for the life of the piece</li>
                   <li>Sewn in small runs in Manila</li>
                 </ul>
@@ -164,7 +164,7 @@ export default async function ProductPage({ params }: PageProps) {
                       <GarmentArt type={rel.garment} className="h-16 w-auto shrink-0 text-foreground" />
                       <span>
                         <span className="block font-display text-[15px]">{rel.name}</span>
-                        <span className="mt-0.5 block text-xs text-accent">{peso(rel.price)}</span>
+                        <span className="mt-0.5 block text-xs text-accent">{money(rel.price)}</span>
                       </span>
                     </Link>
                   ))}

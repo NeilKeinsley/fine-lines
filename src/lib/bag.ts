@@ -8,7 +8,7 @@ import type { CartLine } from "./cart";
  * Construct a fresh one from the store's lines on each render.
  */
 export class Bag {
-  static readonly FREE_SHIPPING_AT = 2995; // PHP
+  static readonly FREE_SHIPPING_AT = 60; // USD
 
   private readonly lines: readonly CartLine[];
 

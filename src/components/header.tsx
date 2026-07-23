@@ -52,7 +52,7 @@ export function Header() {
     >
       {/* announcement hairline bar */}
       <div className="border-b border-line px-3 text-center text-[11px] tracking-[0.18em] uppercase py-1.5 text-muted">
-        Free shipping over ₱2,995 · GCash, Maya &amp; cards accepted
+        Free shipping over $60 · Visa, Mastercard, PayPal &amp; QR Ph accepted
       </div>
 
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:gap-6 sm:px-8">

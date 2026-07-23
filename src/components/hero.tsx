@@ -1,5 +1,7 @@
 import { GarmentArt } from "./garment-art";
 import { Reveal } from "./reveal";
+import { catalog } from "@/lib/catalog";
+import { money } from "@/lib/products";
 
 export function Hero() {
   return (
@@ -63,7 +65,9 @@ export function Hero() {
             <GarmentArt type="coat" autodraw className="mx-auto h-80 w-auto text-foreground" />
             <figcaption className="mt-4 flex items-baseline justify-between border-t border-line pt-4 text-[11px] tracking-[0.18em] uppercase text-muted">
               <span>Fig. 01 · Duster Coat</span>
-              <span className="text-accent">₱6,750</span>
+              <span className="text-accent">
+                {money(catalog.find("duster-coat")?.price ?? 0)}
+              </span>
             </figcaption>
           </figure>
         </Reveal>

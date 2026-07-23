@@ -1,16 +1,13 @@
 import { NextResponse } from "next/server";
 import { paymongo } from "@/lib/payments/paymongo";
+import { orderStore } from "@/lib/orders";
 
 /*
  * PayMongo webhook receiver — the ONLY place an order is confirmed paid
  * (the success redirect is untrusted; see hub research §2).
  * - Signature verified before the body is even parsed.
- * - Handlers must stay idempotent: PayMongo retries deliveries.
+ * - Idempotent via the processed_events table: PayMongo retries deliveries.
  */
-
-// Scaffold idempotency guard. Serverless instances don't share memory —
-// replace with a processed_events table when Railway Postgres lands.
-const processedEvents = new Set<string>();
 
 export async function POST(request: Request) {
   const rawBody = await request.text();
@@ -38,23 +35,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "invalid_payload" }, { status: 400 });
   }
 
-  if (processedEvents.has(eventId)) {
+  if (await orderStore.alreadyProcessed(eventId)) {
     return NextResponse.json({ received: true, duplicate: true });
   }
-  processedEvents.add(eventId);
 
   switch (eventType) {
     case "checkout_session.payment.paid": {
       const sessionId = event.data?.attributes?.data?.id;
-      // TODO(phase 2, DB): mark the order with providerRef === sessionId as
-      // paid, decrement stock, and queue the confirmation email.
-      console.log(`[webhook] checkout session paid: ${sessionId}`);
+      if (sessionId) {
+        const reference = await orderStore.markPaid(sessionId);
+        console.log(
+          reference
+            ? `[webhook] order ${reference} paid (session ${sessionId})`
+            : `[webhook] paid session ${sessionId} matched no order`
+        );
+      }
       break;
     }
     default:
       // Acknowledge unhandled event types so PayMongo stops retrying them.
       break;
   }
+
+  // Record last so a handler crash lets PayMongo retry the event.
+  await orderStore.recordEvent(eventId);
 
   return NextResponse.json({ received: true });
 }
