@@ -3,6 +3,7 @@ import {
   pgTable,
   text,
   timestamp,
+  unique,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -46,3 +47,20 @@ export const processedEvents = pgTable("processed_events", {
   id: text("id").primaryKey(), // the gateway's event id
   receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+/**
+ * Product ratings — registered users only (one rating per user per product).
+ * userId will hold Better Auth ids once auth ships; until then the write API
+ * rejects everything, so rows can only be seeded deliberately.
+ */
+export const ratings = pgTable(
+  "ratings",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    productId: text("product_id").notNull(),
+    userId: text("user_id").notNull(),
+    stars: integer("stars").notNull(), // 1–5
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique("ratings_product_user").on(t.productId, t.userId)]
+);

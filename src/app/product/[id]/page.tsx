@@ -8,12 +8,16 @@ import { GarmentArt } from "@/components/garment-art";
 import { PurchasePanel } from "@/components/purchase-panel";
 import { Reveal } from "@/components/reveal";
 import { catalog } from "@/lib/catalog";
+import { ratingStore } from "@/lib/ratings";
 import { money } from "@/lib/products";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
+
+/* Rating summaries change as users rate — refresh hourly. */
+export const revalidate = 3600;
 
 export function generateStaticParams() {
   return catalog.all().map((p) => ({ id: p.id }));
@@ -42,6 +46,7 @@ export default async function ProductPage({ params }: PageProps) {
   if (!product) notFound();
 
   const related = catalog.related(product);
+  const rating = await ratingStore.summaryFor(product.id);
 
   /* Product schema: price + PreOrder availability (the shop is in preview —
      the structured data stays honest too). */
@@ -130,6 +135,29 @@ export default async function ProductPage({ params }: PageProps) {
                 </div>
                 <p className="mt-5 max-w-md text-[15px] leading-relaxed text-muted">
                   {product.blurb}
+                </p>
+
+                <p className="mt-4 text-sm text-muted">
+                  {rating ? (
+                    <>
+                      <span className="text-accent" aria-hidden>
+                        {"★".repeat(Math.round(rating.average))}
+                        {"☆".repeat(5 - Math.round(rating.average))}
+                      </span>{" "}
+                      {rating.average} · {rating.count}{" "}
+                      {rating.count === 1 ? "rating" : "ratings"} ·{" "}
+                      <Link href="/login" className="link-line">
+                        Sign in to rate
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      No ratings yet ·{" "}
+                      <Link href="/login" className="link-line">
+                        Sign in to be the first
+                      </Link>
+                    </>
+                  )}
                 </p>
 
                 <div className="my-8 h-px w-full bg-line" />

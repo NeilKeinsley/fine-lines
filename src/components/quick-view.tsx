@@ -62,7 +62,7 @@ export function QuickView() {
       />
 
       <div
-        className={`relative w-full max-w-3xl overflow-hidden border border-line bg-background shadow-[0_40px_90px_-30px_rgb(0_0_0/0.5)] transition-all duration-[400ms] [transition-timing-function:var(--ease-spring)] ${
+        className={`relative w-full max-w-[50.4rem] overflow-hidden border border-line bg-background shadow-[0_40px_90px_-30px_rgb(0_0_0/0.5)] transition-all duration-[400ms] [transition-timing-function:var(--ease-spring)] ${
           shown
             ? "opacity-100 scale-100 translate-y-0"
             : "opacity-0 scale-[0.96] translate-y-4"
@@ -79,7 +79,11 @@ export function QuickView() {
           </svg>
         </button>
 
-        <div className="grid max-h-[85vh] overflow-y-auto md:grid-cols-[0.9fr_1.1fr]">
+        {/* Mobile (stacked) scrolls with a visible bar; on desktop the content
+            fits by design, so the rail is hidden — wheel/keys still scroll in
+            the rare case content exceeds 90vh (subpixel rounding otherwise
+            paints a phantom 1px scrollbar). */}
+        <div className="grid max-h-[90vh] overflow-y-auto md:[scrollbar-width:none] md:[&::-webkit-scrollbar]:hidden md:grid-cols-[0.9fr_1.1fr]">
           {/* Plate */}
           <figure className="relative flex items-center justify-center border-b md:border-b-0 md:border-r border-line bg-card p-8">
             <span className="absolute -left-px -top-px h-5 w-5 border-l border-t border-accent" />
@@ -87,7 +91,7 @@ export function QuickView() {
             <GarmentArt
               type={current.garment}
               autodraw
-              className="h-52 w-auto text-foreground sm:h-72"
+              className="h-48 w-auto text-foreground sm:h-64"
             />
             {current.badge && (
               <span

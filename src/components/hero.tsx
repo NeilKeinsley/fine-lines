@@ -1,9 +1,15 @@
-import { GarmentArt } from "./garment-art";
 import { Reveal } from "./reveal";
+import { FeaturedPlate } from "./featured-plate";
 import { catalog } from "@/lib/catalog";
-import { money } from "@/lib/products";
+import { ratingStore } from "@/lib/ratings";
 
-export function Hero() {
+export async function Hero() {
+  // The plate showcases the week's most-rated piece; until ratings exist
+  // (auth is still deferred) it falls back to the Duster Coat.
+  const top = await ratingStore.topRatedThisWeek();
+  const featured =
+    (top && catalog.find(top.productId)) ?? catalog.find("duster-coat")!;
+
   return (
     <section className="relative overflow-hidden">
       {/* faint pattern-table grid backdrop */}
@@ -57,19 +63,13 @@ export function Hero() {
           </Reveal>
         </div>
 
-        {/* Framed self-drawing coat */}
+        {/* Featured plate — the week's most-rated piece, quick-viewable */}
         <Reveal delay={280} className="hidden md:block">
-          <figure className="group relative mx-auto w-full max-w-sm border border-line bg-card p-8">
-            <span className="absolute -left-px -top-px h-5 w-5 border-l border-t border-accent" />
-            <span className="absolute -bottom-px -right-px h-5 w-5 border-b border-r border-accent" />
-            <GarmentArt type="coat" autodraw className="mx-auto h-80 w-auto text-foreground" />
-            <figcaption className="mt-4 flex items-baseline justify-between border-t border-line pt-4 text-[11px] tracking-[0.18em] uppercase text-muted">
-              <span>Fig. 01 · Duster Coat</span>
-              <span className="text-accent">
-                {money(catalog.find("duster-coat")?.price ?? 0)}
-              </span>
-            </figcaption>
-          </figure>
+          <FeaturedPlate
+            product={featured}
+            fig={catalog.figNumber(featured)}
+            rating={top}
+          />
         </Reveal>
       </div>
 
