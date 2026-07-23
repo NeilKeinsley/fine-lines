@@ -7,6 +7,7 @@ import { Faq } from "@/components/faq";
 import { FounderNote } from "@/components/founder-note";
 import { Footer } from "@/components/footer";
 import { CartDrawer } from "@/components/cart-drawer";
+import { QuickView } from "@/components/quick-view";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
       </main>
       <Footer />
       <CartDrawer />
+      <QuickView />
     </>
   );
 }

@@ -195,7 +195,7 @@ export function CartDrawer() {
               </p>
             )}
             <p className="mt-3 text-center text-[10px] tracking-[0.14em] uppercase text-muted">
-              Visa · Mastercard · PayPal · Stripe · QR Ph
+              Visa · Mastercard · PayPal · QR Ph
             </p>
           </footer>
         )}

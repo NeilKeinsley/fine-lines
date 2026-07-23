@@ -5,8 +5,14 @@ import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import { money, SIZES, type Product, type Size } from "@/lib/products";
 
+interface PurchasePanelProps {
+  product: Product;
+  /** Called after a successful add — the quick-view modal closes itself. */
+  onAdd?: () => void;
+}
+
 /** The interactive slice of a product page: size choice, bag, and saving. */
-export function PurchasePanel({ product }: { product: Product }) {
+export function PurchasePanel({ product, onAdd }: PurchasePanelProps) {
   const add = useCart((s) => s.add);
   const openCart = useCart((s) => s.open);
   const toggleSaved = useWishlist((s) => s.toggle);
@@ -25,6 +31,7 @@ export function PurchasePanel({ product }: { product: Product }) {
       return;
     }
     add(product.id, size);
+    onAdd?.();
     openCart();
   };
 

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CartDrawer } from "@/components/cart-drawer";
+import { QuickView } from "@/components/quick-view";
 import { ProductCard } from "@/components/product-card";
 import { GarmentArt } from "@/components/garment-art";
 import { useWishlist } from "@/lib/wishlist";
@@ -46,11 +47,7 @@ export default function SavedPage() {
           ) : (
             <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {saved.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  fig={catalog.figNumber(product)}
-                />
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           )}
@@ -58,6 +55,7 @@ export default function SavedPage() {
       </main>
       <Footer />
       <CartDrawer />
+      <QuickView />
     </>
   );
 }

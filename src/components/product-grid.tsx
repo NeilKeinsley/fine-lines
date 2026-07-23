@@ -44,7 +44,7 @@ export function ProductGrid() {
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {shown.map((product, i) => (
           <Reveal key={product.id} delay={(i % 4) * 90}>
-            <ProductCard product={product} fig={catalog.figNumber(product)} />
+            <ProductCard product={product} />
           </Reveal>
         ))}
       </div>

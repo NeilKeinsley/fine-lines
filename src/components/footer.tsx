@@ -95,7 +95,7 @@ export function Footer() {
           <p>
             © 2026 Fine Lines · <span className="text-accent">Created by Neil</span>
           </p>
-          <p>Visa · Mastercard · PayPal · Stripe · QR Ph</p>
+          <p>Visa · Mastercard · PayPal · QR Ph</p>
         </div>
       </div>
     </footer>
