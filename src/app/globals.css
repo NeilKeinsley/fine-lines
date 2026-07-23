@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+  Fine Lines design tokens.
+  Light = warm paper + ink; dark = warm ink + cream. Accent = tailor's chalk red.
+  Class-based theming (html.dark) so the toggle is user-controlled, à la 21st.dev.
+*/
+:root {
+  --background: oklch(0.972 0.008 84);
+  --foreground: oklch(0.253 0.014 74);
+  --card: oklch(0.988 0.005 88);
+  --muted: oklch(0.52 0.014 74);
+  --line: oklch(0.253 0.014 74 / 0.14);
+  --line-strong: oklch(0.253 0.014 74 / 0.34);
+  --accent: oklch(0.545 0.185 30);
+  --accent-contrast: oklch(0.985 0.008 84);
+  --shimmer-hi: oklch(0.253 0.014 74 / 0.06);
+}
+
+.dark {
+  --background: oklch(0.176 0.006 78);
+  --foreground: oklch(0.924 0.012 84);
+  --card: oklch(0.214 0.007 78);
+  --muted: oklch(0.68 0.012 82);
+  --line: oklch(0.924 0.012 84 / 0.14);
+  --line-strong: oklch(0.924 0.012 84 / 0.36);
+  --accent: oklch(0.68 0.165 32);
+  --accent-contrast: oklch(0.176 0.006 78);
+  --shimmer-hi: oklch(0.924 0.012 84 / 0.09);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-contrast: var(--accent-contrast);
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-archivo);
+  --ease-spring: cubic-bezier(0.23, 1, 0.32, 1);
+  --animate-appear: appear 0.7s var(--ease-spring) both;
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-text-shimmer: text-shimmer 2.6s linear infinite;
+  --animate-shimmer-slide: shimmer-slide 2.8s ease-in-out infinite;
+  --animate-draw: draw 1.6s var(--ease-spring) forwards;
+}
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(22px); filter: blur(5px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes text-shimmer {
+  from { background-position: 200% center; }
+  to { background-position: -200% center; }
+}
+@keyframes shimmer-slide {
+  from { transform: translateX(-130%) skewX(-18deg); }
+  to { transform: translateX(230%) skewX(-18deg); }
+}
+@keyframes draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes cart-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  transition: background-color 0.45s ease, color 0.45s ease;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+/* --- Fine-lines motif utilities --- */
+
+/* Scroll reveal: .reveal starts hidden; .is-visible plays the entrance. */
+.reveal { opacity: 0; }
+.reveal.is-visible {
+  animation: appear 0.7s var(--ease-spring) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; }
+  .reveal.is-visible { animation: none; }
+  .marquee-track { animation: none !important; }
+}
+
+/* Gradient-sweep headline word (21st.dev text-shimmer) */
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--accent) 0%,
+    var(--foreground) 45%,
+    var(--accent) 90%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: text-shimmer 3.2s linear infinite;
+}
+
+/* Highlight sweep across a CTA (21st.dev shimmer-slide) */
+.btn-shimmer { position: relative; overflow: hidden; }
+.btn-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, var(--shimmer-hi), transparent);
+  animation: shimmer-slide 2.8s ease-in-out infinite;
+}
+
+/* Link underline that draws itself left→right */
+.link-line {
+  position: relative;
+  text-decoration: none;
+}
+.link-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease-spring);
+}
+.link-line:hover::after { transform: scaleX(1); }
+
+/* Garment line-art: redraws itself in accent on card hover */
+.garment path,
+.garment circle,
+.garment line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  transition: stroke 0.3s ease;
+}
+.group:hover .garment path,
+.group:hover .garment circle,
+.group:hover .garment line {
+  stroke: var(--accent);
+  animation: draw 1.1s var(--ease-spring) forwards;
+}
+.garment-autodraw path,
+.garment-autodraw circle,
+.garment-autodraw line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 2s var(--ease-spring) forwards;
+  animation-delay: calc(var(--draw-index, 0) * 180ms + 300ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .garment-autodraw path,
+  .garment-autodraw circle,
+  .garment-autodraw line {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+}
+
+.cart-pop { animation: cart-pop 0.45s var(--ease-spring); }
+
+/* FAQ accordion */
+details.faq summary::-webkit-details-marker { display: none; }
+details.faq[open] .faq-icon { transform: rotate(45deg); }
+.faq-icon { transition: transform 0.3s var(--ease-spring); }
