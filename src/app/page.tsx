@@ -4,6 +4,7 @@ import { ProductTicker } from "@/components/product-ticker";
 import { ProductGrid } from "@/components/product-grid";
 import { Craft } from "@/components/craft";
 import { Faq } from "@/components/faq";
+import { FounderNote } from "@/components/founder-note";
 import { Footer } from "@/components/footer";
 import { CartDrawer } from "@/components/cart-drawer";
 
@@ -17,6 +18,7 @@ export default function Home() {
         <ProductGrid />
         <Craft />
         <Faq />
+        <FounderNote />
       </main>
       <Footer />
       <CartDrawer />

@@ -44,6 +44,13 @@ export class Catalog {
     const index = this.products.findIndex((p) => p.id === product.id);
     return String(index + 2).padStart(2, "0");
   }
+
+  /** Other pieces in the same category, for "more like this" rows. */
+  related(product: Product, limit = 3): readonly Product[] {
+    return this.products
+      .filter((p) => p.category === product.category && p.id !== product.id)
+      .slice(0, limit);
+  }
 }
 
 /** Shared instance — the storefront has exactly one catalog. */

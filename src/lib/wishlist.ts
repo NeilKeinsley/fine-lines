@@ -1,0 +1,29 @@
+"use client";
+
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+interface WishlistState {
+  ids: string[];
+  toggle: (productId: string) => void;
+  has: (productId: string) => boolean;
+}
+
+export const useWishlist = create<WishlistState>()(
+  persist(
+    (set, get) => ({
+      ids: [],
+      toggle: (productId) =>
+        set((s) => ({
+          ids: s.ids.includes(productId)
+            ? s.ids.filter((id) => id !== productId)
+            : [...s.ids, productId],
+        })),
+      has: (productId) => get().ids.includes(productId),
+    }),
+    {
+      name: "fine-lines-wishlist",
+      partialize: (s) => ({ ids: s.ids }),
+    }
+  )
+);

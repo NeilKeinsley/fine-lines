@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { GarmentArt } from "./garment-art";
 import { useCart } from "@/lib/cart";
+import { useWishlist } from "@/lib/wishlist";
 import { peso, SIZES, type Product, type Size } from "@/lib/products";
 
 interface ProductCardProps {
@@ -14,10 +16,15 @@ interface ProductCardProps {
 export function ProductCard({ product, fig }: ProductCardProps) {
   const add = useCart((s) => s.add);
   const openCart = useCart((s) => s.open);
+  const toggleSaved = useWishlist((s) => s.toggle);
+  const savedIds = useWishlist((s) => s.ids);
   const [added, setAdded] = useState<Size | null>(null);
   // Hover reveals the size panel on desktop; on touch there is no hover, so
   // tapping the artwork toggles it instead.
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const saved = mounted && savedIds.includes(product.id);
 
   const handleAdd = (size: Size) => {
     add(product.id, size);
@@ -44,6 +51,27 @@ export function ProductCard({ product, fig }: ProductCardProps) {
         <span className="absolute right-4 top-4 text-[10px] tracking-[0.18em] uppercase text-muted">
           Fig. {fig}
         </span>
+        <button
+          type="button"
+          aria-label={saved ? `Remove ${product.name} from saved` : `Save ${product.name} for later`}
+          aria-pressed={saved}
+          onClick={() => toggleSaved(product.id)}
+          className={`absolute right-3 top-10 z-10 flex h-8 w-8 items-center justify-center rounded-full border transition-colors duration-300 cursor-pointer ${
+            saved ? "border-accent text-accent" : "border-line text-muted hover:border-line-strong"
+          }`}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            className="h-4 w-4"
+            fill={saved ? "currentColor" : "none"}
+            stroke="currentColor"
+            strokeWidth={1.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M12 20.5 4.7 13a4.6 4.6 0 0 1 0-6.5 4.5 4.5 0 0 1 6.4 0l.9.9.9-.9a4.5 4.5 0 0 1 6.4 0 4.6 4.6 0 0 1 0 6.5Z" />
+          </svg>
+        </button>
         <button
           type="button"
           aria-label={`Choose a size for ${product.name}`}
@@ -81,7 +109,11 @@ export function ProductCard({ product, fig }: ProductCardProps) {
 
       <div className="flex items-start justify-between gap-3 border-t border-line p-4">
         <div>
-          <h3 className="font-display text-[17px] leading-snug">{product.name}</h3>
+          <h3 className="font-display text-[17px] leading-snug">
+            <Link href={`/product/${product.id}`} className="link-line">
+              {product.name}
+            </Link>
+          </h3>
           <p className="mt-1 text-xs text-muted">{product.blurb}</p>
         </div>
         <div className="text-right">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 import { useCart } from "@/lib/cart";
+import { useWishlist } from "@/lib/wishlist";
 import { Bag } from "@/lib/bag";
 
 const NAV = [
@@ -16,6 +17,7 @@ const NAV = [
 
 export function Header() {
   const { lines, open } = useCart();
+  const savedCount = useWishlist((s) => s.ids.length);
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -79,6 +81,28 @@ export function Header() {
 
         <div className="flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
+          <Link
+            href="/saved"
+            aria-label="Saved pieces"
+            className="relative flex h-9 w-9 items-center justify-center rounded-full border border-line hover:border-line-strong transition-colors duration-300"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 20.5 4.7 13a4.6 4.6 0 0 1 0-6.5 4.5 4.5 0 0 1 6.4 0l.9.9.9-.9a4.5 4.5 0 0 1 6.4 0 4.6 4.6 0 0 1 0 6.5Z" />
+            </svg>
+            {mounted && savedCount > 0 && (
+              <span className="absolute -right-1 -top-1 min-w-4 rounded-full bg-accent px-1 text-center text-[10px] leading-4 text-accent-contrast">
+                {savedCount}
+              </span>
+            )}
+          </Link>
           <Link
             href="/login"
             className="hidden sm:flex h-9 items-center rounded-full border border-line px-4 text-[13px] tracking-wide hover:border-line-strong transition-colors duration-300"

@@ -95,6 +95,9 @@ export function Footer() {
           <p>
             © 2026 Fine Lines · <span className="text-accent">Created by Neil</span>
           </p>
+          <p className="normal-case tracking-normal">
+            Set in Fraunces &amp; Archivo. Drawn and coded in Manila.
+          </p>
           <p>Visa · Mastercard · GCash · Maya · QR Ph</p>
         </div>
       </div>
