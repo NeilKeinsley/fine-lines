@@ -72,7 +72,9 @@ export function ProductCard({ product }: { product: Product }) {
               {product.name}
             </Link>
           </h3>
-          <p className="mt-1 text-xs text-muted">{product.blurb}</p>
+          {/* Max two lines for card uniformity — the full blurb lives in the
+              quick-view modal and on the product page. */}
+          <p className="mt-1 min-h-8 text-xs text-muted line-clamp-2">{product.blurb}</p>
         </div>
         <div className="text-right">
           <p className="text-sm font-medium">{money(product.price)}</p>
