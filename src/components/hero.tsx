@@ -1,7 +1,7 @@
 import { GarmentArt } from "./garment-art";
 import { Reveal } from "./reveal";
 
-const TICKER = [
+const STRIP = [
   "The Tailored Line, SS26",
   "Free shipping over ₱2,995",
   "GCash · Maya · QR Ph · Cards",
@@ -33,36 +33,36 @@ export function Hero() {
           </Reveal>
           <Reveal delay={120}>
             <h1 className="font-display text-[clamp(2.8rem,7vw,5.2rem)] font-medium leading-[1.02] tracking-tight">
-              Clothing cut
+              Every garment
               <br />
-              with <em className="text-shimmer not-italic font-semibold italic">intention</em>.
+              starts as a <em className="font-semibold text-accent">line</em>.
             </h1>
           </Reveal>
           <Reveal delay={240}>
             <p className="mt-6 max-w-md text-[15px] leading-relaxed text-muted">
-              Every piece here started as a pencil line on pattern paper.
-              Most sketches never make it past the table. These did.
+              Most sketches never make it past the pattern table. The twelve
+              pieces in this shop did.
             </p>
           </Reveal>
           <Reveal delay={360}>
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <a
                 href="#shop"
-                className="btn-shimmer inline-flex h-12 items-center rounded-full bg-foreground px-7 text-sm text-background hover:scale-105 transition-transform duration-300 [transition-timing-function:var(--ease-spring)]"
+                className="inline-flex h-12 items-center rounded-full bg-foreground px-7 text-sm text-background hover:scale-105 transition-transform duration-300 [transition-timing-function:var(--ease-spring)]"
               >
-                Shop the collection
+                See all twelve
               </a>
               <a
                 href="#craft"
                 className="link-line text-sm tracking-wide text-muted hover:text-foreground transition-colors"
               >
-                Our craft →
+                Why so few →
               </a>
             </div>
           </Reveal>
         </div>
 
-        {/* Framed self-drawing coat — the brand moment */}
+        {/* Framed self-drawing coat */}
         <Reveal delay={280} className="hidden md:block">
           <figure className="group relative mx-auto w-full max-w-sm border border-line bg-card p-8">
             <span className="absolute -left-px -top-px h-5 w-5 border-l border-t border-accent" />
@@ -76,20 +76,13 @@ export function Hero() {
         </Reveal>
       </div>
 
-      {/* marquee ticker on hairlines */}
-      <div className="relative border-y border-line py-3 overflow-hidden">
-        <div className="marquee-track flex w-max animate-marquee gap-0 whitespace-nowrap">
-          {[0, 1].map((dup) => (
-            <div key={dup} className="flex shrink-0" aria-hidden={dup === 1}>
-              {TICKER.map((t) => (
-                <span
-                  key={`${dup}-${t}`}
-                  className="mx-8 text-[11px] tracking-[0.24em] uppercase text-muted"
-                >
-                  {t} <span className="ml-8 text-accent">·</span>
-                </span>
-              ))}
-            </div>
+      {/* static USP strip on hairlines — deliberately not a marquee */}
+      <div className="border-y border-line">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-1 px-5 py-3 sm:justify-between sm:px-8">
+          {STRIP.map((t) => (
+            <span key={t} className="text-[11px] tracking-[0.2em] uppercase text-muted">
+              {t}
+            </span>
           ))}
         </div>
       </div>

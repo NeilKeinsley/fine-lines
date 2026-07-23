@@ -3,17 +3,18 @@
 import { useState } from "react";
 import { GarmentArt } from "./garment-art";
 import { useCart } from "@/lib/cart";
-import { peso, type Product } from "@/lib/products";
+import { peso, SIZES, type Product, type Size } from "@/lib/products";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product, fig }: { product: Product; fig: number }) {
   const add = useCart((s) => s.add);
   const openCart = useCart((s) => s.open);
-  const [added, setAdded] = useState(false);
+  const [added, setAdded] = useState<Size | null>(null);
 
-  const handleAdd = () => {
-    add(product.id);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1200);
+  const handleAdd = (size: Size) => {
+    add(product.id, size);
+    setAdded(size);
+    openCart();
+    setTimeout(() => setAdded(null), 1500);
   };
 
   return (
@@ -31,27 +32,37 @@ export function ProductCard({ product }: { product: Product }) {
       )}
 
       <div className="relative flex aspect-[4/5] items-center justify-center overflow-hidden">
+        <span className="absolute right-4 top-4 text-[10px] tracking-[0.18em] uppercase text-muted">
+          Fig. {String(fig).padStart(2, "0")}
+        </span>
         <GarmentArt
           type={product.garment}
           className="h-3/4 w-auto text-foreground transition-transform duration-500 [transition-timing-function:var(--ease-spring)] group-hover:scale-[1.06]"
         />
-        {/* quick add slides up on hover */}
-        <button
-          type="button"
-          onClick={() => {
-            handleAdd();
-            openCart();
-          }}
-          className="absolute inset-x-0 bottom-0 translate-y-full bg-foreground py-3 text-[12px] tracking-[0.18em] uppercase text-background transition-transform duration-300 [transition-timing-function:var(--ease-spring)] group-hover:translate-y-0 focus-visible:translate-y-0 cursor-pointer"
-        >
-          {added ? "Added ✓" : "Add to bag"}
-        </button>
+        {/* size picker slides up on hover; choosing a size adds it */}
+        <div className="absolute inset-x-0 bottom-0 translate-y-full bg-foreground text-background transition-transform duration-300 [transition-timing-function:var(--ease-spring)] group-hover:translate-y-0 focus-within:translate-y-0">
+          <p className="pt-2.5 text-center text-[10px] tracking-[0.2em] uppercase opacity-70">
+            {added ? `In the bag, size ${added}` : "Pick a size"}
+          </p>
+          <div className="flex justify-center gap-1 px-3 pb-2.5 pt-1.5">
+            {SIZES.map((size) => (
+              <button
+                key={size}
+                type="button"
+                onClick={() => handleAdd(size)}
+                className="min-w-9 rounded-full border border-background/30 px-2 py-1 text-[12px] hover:bg-background hover:text-foreground transition-colors duration-200 cursor-pointer"
+              >
+                {size}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="flex items-start justify-between gap-3 border-t border-line p-4">
         <div>
           <h3 className="font-display text-[17px] leading-snug">{product.name}</h3>
-          <p className="mt-1 text-xs text-muted line-clamp-1">{product.blurb}</p>
+          <p className="mt-1 text-xs text-muted">{product.blurb}</p>
         </div>
         <div className="text-right">
           <p className="text-sm font-medium">{peso(product.price)}</p>

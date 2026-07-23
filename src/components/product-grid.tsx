@@ -47,7 +47,8 @@ export function ProductGrid() {
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {shown.map((p, i) => (
           <Reveal key={p.id} delay={(i % 4) * 90}>
-            <ProductCard product={p} />
+            {/* Fig. 01 is the hero coat; cards continue the numbering from the full catalog */}
+            <ProductCard product={p} fig={PRODUCTS.indexOf(p) + 2} />
           </Reveal>
         ))}
       </div>

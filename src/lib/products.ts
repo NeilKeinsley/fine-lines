@@ -18,7 +18,7 @@ export interface Product {
   garment: GarmentType;
   price: number; // PHP
   compareAt?: number;
-  badge?: "New" | "Best Seller" | "Sale";
+  badge?: "New" | "Studio favourite" | "Sale";
   blurb: string;
 }
 
@@ -30,6 +30,11 @@ export const CATEGORIES: Category[] = [
   "Knitwear",
 ];
 
+export const SIZES = ["XS", "S", "M", "L", "XL"] as const;
+export type Size = (typeof SIZES)[number];
+
+/* Blurbs are deliberately uneven in length and shape — see the anti-slop
+   field guide (uniform card copy is a tell). Don't "tidy" them back. */
 export const PRODUCTS: Product[] = [
   {
     id: "meridian-tee",
@@ -37,8 +42,9 @@ export const PRODUCTS: Product[] = [
     category: "Tops",
     garment: "tee",
     price: 1290,
-    badge: "Best Seller",
-    blurb: "Heavyweight combed cotton, set-in sleeve, garment-dyed.",
+    badge: "Studio favourite",
+    blurb:
+      "Heavyweight combed cotton with a set-in sleeve. Garment-dyed, so expect slight variation between runs.",
   },
   {
     id: "half-tuck-oxford",
@@ -46,7 +52,7 @@ export const PRODUCTS: Product[] = [
     category: "Tops",
     garment: "shirt",
     price: 2450,
-    blurb: "Washed oxford cloth with a softened collar roll.",
+    blurb: "Washed until the collar rolls soft.",
   },
   {
     id: "chore-jacket-4",
@@ -55,7 +61,7 @@ export const PRODUCTS: Product[] = [
     garment: "jacket",
     price: 4980,
     badge: "New",
-    blurb: "Three-pocket workwear cut in 10 oz brushed twill.",
+    blurb: "Three patch pockets in 10 oz brushed twill.",
   },
   {
     id: "duster-coat",
@@ -65,7 +71,7 @@ export const PRODUCTS: Product[] = [
     price: 6750,
     compareAt: 7900,
     badge: "Sale",
-    blurb: "Floor-skimming silhouette with a hidden placket.",
+    blurb: "Floor-skimming, with a placket you have to look twice to find.",
   },
   {
     id: "bias-slip-dress",
@@ -82,7 +88,7 @@ export const PRODUCTS: Product[] = [
     category: "Bottoms",
     garment: "skirt",
     price: 2780,
-    blurb: "Knife pleats pressed to a permanent crease.",
+    blurb: "Knife pleats, pressed permanent.",
   },
   {
     id: "wide-leg-trousers",
@@ -90,8 +96,8 @@ export const PRODUCTS: Product[] = [
     category: "Bottoms",
     garment: "trousers",
     price: 3150,
-    badge: "Best Seller",
-    blurb: "High rise, deep pleat, and a full break at the hem.",
+    badge: "Studio favourite",
+    blurb: "High rise and a deep front pleat. Full break at the hem, so plan your shoes accordingly.",
   },
   {
     id: "ribline-crewneck",
@@ -99,7 +105,7 @@ export const PRODUCTS: Product[] = [
     category: "Knitwear",
     garment: "sweater",
     price: 3420,
-    blurb: "Merino-blend knit with wide ribbing at every edge.",
+    blurb: "Merino blend with a wide rib at every edge.",
   },
   {
     id: "boxy-linen-shirt",
@@ -109,7 +115,7 @@ export const PRODUCTS: Product[] = [
     price: 2190,
     compareAt: 2590,
     badge: "Sale",
-    blurb: "Airy European flax in a cropped, boxy block.",
+    blurb: "European flax, cropped and boxy. Wrinkles are part of the deal.",
   },
   {
     id: "tailored-blazer",
@@ -117,7 +123,7 @@ export const PRODUCTS: Product[] = [
     category: "Outerwear",
     garment: "blazer",
     price: 5890,
-    blurb: "Soft-shoulder tailoring with a single horn button.",
+    blurb: "Soft shoulder, one horn button.",
   },
   {
     id: "aline-shirt-dress",
@@ -125,7 +131,7 @@ export const PRODUCTS: Product[] = [
     category: "Dresses",
     garment: "dress",
     price: 3290,
-    blurb: "Belted poplin shirt dress that moves like a sketch.",
+    blurb: "Belted poplin with a skirt that swings.",
   },
   {
     id: "selvedge-jean",
@@ -133,7 +139,7 @@ export const PRODUCTS: Product[] = [
     category: "Bottoms",
     garment: "trousers",
     price: 3680,
-    blurb: "14 oz Japanese selvedge, chain-stitched hem.",
+    blurb: "14 oz Japanese selvedge, chain-stitched at the hem. Stiff for the first two weeks, then it gives in.",
   },
 ];
 

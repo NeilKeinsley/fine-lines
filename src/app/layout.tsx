@@ -15,9 +15,9 @@ const archivo = Archivo({
 });
 
 export const metadata: Metadata = {
-  title: "Fine Lines | Clothing cut with intention",
+  title: "Fine Lines | Clothing that starts as a drawing",
   description:
-    "Fine Lines is a small clothing label out of Manila. Pattern-first tailoring in honest cloth, shipped nationwide. Created by Neil.",
+    "Fine Lines is a small clothing label out of Manila. Every piece starts as a pattern drawing and is sewn in short runs. Created by Neil.",
 };
 
 export default function RootLayout({

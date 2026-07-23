@@ -1,19 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GarmentArt } from "./garment-art";
-import {
-  useCart,
-  cartProduct,
-  cartSubtotal,
-  cartCount,
-} from "@/lib/cart";
+import { useCart, cartProduct, cartSubtotal, cartCount } from "@/lib/cart";
 import { peso } from "@/lib/products";
 
 const FREE_SHIP_AT = 2995;
 
 export function CartDrawer() {
   const { lines, isOpen, close, setQty, remove } = useCart();
+  const [checkoutNote, setCheckoutNote] = useState(false);
   const subtotal = cartSubtotal(lines);
   const count = cartCount(lines);
   const toFree = Math.max(0, FREE_SHIP_AT - subtotal);
@@ -70,7 +66,7 @@ export function CartDrawer() {
           <p className="text-[11px] tracking-[0.14em] uppercase text-muted">
             {toFree > 0
               ? `${peso(toFree)} more and shipping's on us`
-              : "Shipping's on us ✓"}
+              : "Shipping's on us"}
           </p>
           <div className="mt-2 h-px w-full bg-line">
             <div
@@ -100,7 +96,7 @@ export function CartDrawer() {
                 if (!p) return null;
                 return (
                   <li
-                    key={line.productId}
+                    key={`${line.productId}-${line.size}`}
                     className="flex gap-4 border-b border-line py-5"
                   >
                     <div className="flex h-24 w-20 shrink-0 items-center justify-center border border-line bg-card">
@@ -111,13 +107,15 @@ export function CartDrawer() {
                         <h3 className="font-display text-[15px] leading-snug">{p.name}</h3>
                         <p className="text-sm">{peso(p.price * line.qty)}</p>
                       </div>
-                      <p className="mt-0.5 text-xs text-muted">{p.category}</p>
+                      <p className="mt-0.5 text-xs text-muted">
+                        {p.category} · Size {line.size}
+                      </p>
                       <div className="mt-auto flex items-center justify-between">
                         <div className="flex items-center border border-line">
                           <button
                             type="button"
                             aria-label="Decrease quantity"
-                            onClick={() => setQty(line.productId, line.qty - 1)}
+                            onClick={() => setQty(line.productId, line.size, line.qty - 1)}
                             className="px-2.5 py-1 text-sm hover:bg-card transition-colors cursor-pointer"
                           >
                             −
@@ -126,7 +124,7 @@ export function CartDrawer() {
                           <button
                             type="button"
                             aria-label="Increase quantity"
-                            onClick={() => setQty(line.productId, line.qty + 1)}
+                            onClick={() => setQty(line.productId, line.size, line.qty + 1)}
                             className="px-2.5 py-1 text-sm hover:bg-card transition-colors cursor-pointer"
                           >
                             +
@@ -134,7 +132,7 @@ export function CartDrawer() {
                         </div>
                         <button
                           type="button"
-                          onClick={() => remove(line.productId)}
+                          onClick={() => remove(line.productId, line.size)}
                           className="link-line text-xs text-muted hover:text-accent cursor-pointer"
                         >
                           Remove
@@ -159,15 +157,18 @@ export function CartDrawer() {
             </p>
             <button
               type="button"
-              className="btn-shimmer w-full rounded-full bg-foreground py-3.5 text-sm text-background hover:scale-[1.02] transition-transform duration-300 [transition-timing-function:var(--ease-spring)] cursor-pointer"
-              onClick={() =>
-                alert(
-                  "Checkout opens soon. We're wiring up cards, GCash, Maya, and QR Ph right now."
-                )
-              }
+              className="w-full rounded-full bg-foreground py-3.5 text-sm text-background hover:scale-[1.02] transition-transform duration-300 [transition-timing-function:var(--ease-spring)] cursor-pointer"
+              onClick={() => setCheckoutNote(true)}
             >
               Checkout · {peso(subtotal)}
             </button>
+            {checkoutNote && (
+              <p className="mt-3 border border-line bg-card px-4 py-3 text-xs leading-relaxed text-muted">
+                The register isn&apos;t open yet. We&apos;re wiring up cards,
+                GCash, Maya, and QR Ph now, and your bag will keep everything
+                saved until launch.
+              </p>
+            )}
             <p className="mt-3 text-center text-[10px] tracking-[0.14em] uppercase text-muted">
               Visa · Mastercard · GCash · Maya · QR Ph
             </p>

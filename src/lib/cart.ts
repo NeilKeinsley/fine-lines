@@ -2,10 +2,11 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { PRODUCTS, type Product } from "./products";
+import { PRODUCTS, type Product, type Size } from "./products";
 
 export interface CartLine {
   productId: string;
+  size: Size;
   qty: number;
 }
 
@@ -14,11 +15,14 @@ interface CartState {
   isOpen: boolean;
   open: () => void;
   close: () => void;
-  add: (productId: string) => void;
-  remove: (productId: string) => void;
-  setQty: (productId: string, qty: number) => void;
+  add: (productId: string, size: Size) => void;
+  remove: (productId: string, size: Size) => void;
+  setQty: (productId: string, size: Size, qty: number) => void;
   clear: () => void;
 }
+
+const sameLine = (l: CartLine, productId: string, size: Size) =>
+  l.productId === productId && l.size === size;
 
 export const useCart = create<CartState>()(
   persist(
@@ -27,31 +31,35 @@ export const useCart = create<CartState>()(
       isOpen: false,
       open: () => set({ isOpen: true }),
       close: () => set({ isOpen: false }),
-      add: (productId) =>
+      add: (productId, size) =>
         set((s) => {
-          const existing = s.lines.find((l) => l.productId === productId);
+          const existing = s.lines.find((l) => sameLine(l, productId, size));
           const lines = existing
             ? s.lines.map((l) =>
-                l.productId === productId ? { ...l, qty: l.qty + 1 } : l
+                sameLine(l, productId, size) ? { ...l, qty: l.qty + 1 } : l
               )
-            : [...s.lines, { productId, qty: 1 }];
+            : [...s.lines, { productId, size, qty: 1 }];
           return { lines };
         }),
-      remove: (productId) =>
-        set((s) => ({ lines: s.lines.filter((l) => l.productId !== productId) })),
-      setQty: (productId, qty) =>
+      remove: (productId, size) =>
+        set((s) => ({
+          lines: s.lines.filter((l) => !sameLine(l, productId, size)),
+        })),
+      setQty: (productId, size, qty) =>
         set((s) => ({
           lines:
             qty <= 0
-              ? s.lines.filter((l) => l.productId !== productId)
+              ? s.lines.filter((l) => !sameLine(l, productId, size))
               : s.lines.map((l) =>
-                  l.productId === productId ? { ...l, qty } : l
+                  sameLine(l, productId, size) ? { ...l, qty } : l
                 ),
         })),
       clear: () => set({ lines: [] }),
     }),
     {
       name: "fine-lines-cart",
+      version: 1, // v0 lines had no size; drop them rather than guess one
+      migrate: () => ({ lines: [] }),
       partialize: (s) => ({ lines: s.lines }),
     }
   )

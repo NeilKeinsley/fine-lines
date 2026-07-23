@@ -17,14 +17,13 @@ export function Craft() {
             <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-muted">
               A silhouette has to earn its way off the paper. If the line
               wobbles, the cloth will wobble worse, so we redraw until it
-              doesn&apos;t. What you see in the shop is the short stack that
-              survived. The Duster Coat took eleven drafts. The Meridian Tee
-              took two, and we&apos;re still a little smug about that.
+              doesn&apos;t. The twelve pieces in the shop are the short stack
+              that survived the table.
             </p>
             <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-muted">
-              Seams are chain-stitched where they take strain. If one ever
-              gives out, post it to us and we&apos;ll repair it. That offer
-              doesn&apos;t expire.
+              Seams are chain-stitched where they take strain. If one gives
+              out, send the piece back and we&apos;ll repair it, however old
+              it is.
             </p>
           </div>
         </Reveal>
@@ -35,9 +34,8 @@ export function Craft() {
             <div>
               <p className="font-display text-2xl italic text-accent">Paying is your call</p>
               <p className="mt-3 text-sm leading-relaxed text-muted">
-                Cards, GCash, Maya, QR Ph. The payment page is hosted by a
-                PCI-compliant gateway, so card numbers never reach us. Good.
-                We didn&apos;t want them.
+                Cards, GCash, Maya, QR Ph. The payment page will be hosted by
+                a PCI-compliant gateway, so card numbers never reach us.
               </p>
             </div>
           </Reveal>

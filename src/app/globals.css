@@ -44,27 +44,12 @@
   --font-sans: var(--font-archivo);
   --ease-spring: cubic-bezier(0.23, 1, 0.32, 1);
   --animate-appear: appear 0.7s var(--ease-spring) both;
-  --animate-marquee: marquee 32s linear infinite;
-  --animate-text-shimmer: text-shimmer 2.6s linear infinite;
-  --animate-shimmer-slide: shimmer-slide 2.8s ease-in-out infinite;
   --animate-draw: draw 1.6s var(--ease-spring) forwards;
 }
 
 @keyframes appear {
   from { opacity: 0; transform: translateY(22px); filter: blur(5px); }
   to { opacity: 1; transform: translateY(0); filter: blur(0); }
-}
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-@keyframes text-shimmer {
-  from { background-position: 200% center; }
-  to { background-position: -200% center; }
-}
-@keyframes shimmer-slide {
-  from { transform: translateX(-130%) skewX(-18deg); }
-  to { transform: translateX(230%) skewX(-18deg); }
 }
 @keyframes draw {
   from { stroke-dashoffset: 1; }
@@ -99,34 +84,11 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; }
   .reveal.is-visible { animation: none; }
-  .marquee-track { animation: none !important; }
 }
 
-/* Gradient-sweep headline word (21st.dev text-shimmer) */
-.text-shimmer {
-  background: linear-gradient(
-    90deg,
-    var(--accent) 0%,
-    var(--foreground) 45%,
-    var(--accent) 90%
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: text-shimmer 3.2s linear infinite;
-}
-
-/* Highlight sweep across a CTA (21st.dev shimmer-slide) */
-.btn-shimmer { position: relative; overflow: hidden; }
-.btn-shimmer::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  width: 40%;
-  background: linear-gradient(90deg, transparent, var(--shimmer-hi), transparent);
-  animation: shimmer-slide 2.8s ease-in-out infinite;
-}
+/* Retired on purpose: marquee ticker, gradient text-shimmer, and CTA shimmer
+   sweep are codified AI-design tells (see the anti-slop field guide in the
+   hub). Don't reintroduce them. */
 
 /* Link underline that draws itself left→right */
 .link-line {

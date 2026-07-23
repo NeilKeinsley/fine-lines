@@ -15,13 +15,8 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="flex items-center justify-between border-b border-line px-5 py-4 sm:px-8">
-        <Link href="/" className="flex flex-col leading-none">
-          <span className="font-display text-[22px] font-semibold italic tracking-tight">
-            Fine&nbsp;Lines
-          </span>
-          <span className="mt-1 text-[9px] tracking-[0.22em] uppercase text-muted">
-            Created by Neil
-          </span>
+        <Link href="/" className="font-display text-[22px] font-semibold italic tracking-tight leading-none">
+          Fine&nbsp;Lines
         </Link>
         <div className="flex items-center gap-3">
           <ThemeToggle />
@@ -62,11 +57,17 @@ export default function LoginPage() {
             <div>
               <p className="mb-3 flex items-center gap-3 text-[11px] tracking-[0.24em] uppercase text-muted">
                 <span className="inline-block h-px w-10 bg-accent" />
-                {mode === "signin" ? "Welcome back" : "Join the line"}
+                {mode === "signin" ? "Welcome back" : "New here"}
               </p>
               <h1 className="font-display text-4xl font-medium tracking-tight">
                 {mode === "signin" ? "Sign in." : "Create account."}
               </h1>
+
+              <p className="mt-4 border border-line bg-card px-4 py-3 text-xs leading-relaxed text-muted">
+                The shop is in preview and accounts open at launch, so this
+                form doesn&apos;t submit anywhere yet. You can already browse
+                and bag pieces without one.
+              </p>
 
               {/* mode switch */}
               <div className="mt-6 flex border border-line text-[13px]">
@@ -132,14 +133,13 @@ export default function LoginPage() {
 
                 {sent && (
                   <p className="border border-line bg-card px-4 py-3 text-xs leading-relaxed text-muted">
-                    Accounts open soon. Nothing was submitted, and you can
-                    already shop without one.
+                    Nothing was submitted. Accounts open at launch.
                   </p>
                 )}
 
                 <button
                   type="submit"
-                  className="btn-shimmer w-full rounded-full bg-foreground py-3 text-sm text-background hover:scale-[1.02] transition-transform duration-300 [transition-timing-function:var(--ease-spring)] cursor-pointer"
+                  className="w-full rounded-full bg-foreground py-3 text-sm text-background hover:scale-[1.02] transition-transform duration-300 [transition-timing-function:var(--ease-spring)] cursor-pointer"
                 >
                   {mode === "signin" ? "Sign in" : "Create account"}
                 </button>
@@ -153,8 +153,8 @@ export default function LoginPage() {
 
               <button
                 type="button"
-                onClick={() => setSent(true)}
-                className="flex w-full items-center justify-center gap-3 rounded-full border border-line py-3 text-sm hover:border-line-strong transition-colors duration-300 cursor-pointer"
+                disabled
+                className="flex w-full items-center justify-center gap-3 rounded-full border border-line py-3 text-sm text-muted cursor-not-allowed"
               >
                 <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
                   <path
@@ -162,7 +162,7 @@ export default function LoginPage() {
                     d="M21.35 11.1H12v2.9h5.4c-.5 2.5-2.6 3.9-5.4 3.9a6 6 0 1 1 0-12c1.5 0 2.9.6 4 1.5l2.2-2.2A9 9 0 1 0 12 21c5.2 0 8.7-3.7 8.7-8.9 0-.3 0-.7-.1-1Z"
                   />
                 </svg>
-                Continue with Google
+                Google sign-in arrives at launch
               </button>
 
               <p className="mt-6 text-center text-xs leading-relaxed text-muted">
