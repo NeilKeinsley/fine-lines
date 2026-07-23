@@ -86,9 +86,24 @@ body {
   .reveal.is-visible { animation: none; }
 }
 
-/* Retired on purpose: marquee ticker, gradient text-shimmer, and CTA shimmer
-   sweep are codified AI-design tells (see the anti-slop field guide in the
-   hub). Don't reintroduce them. */
+/* Retired on purpose: decorative TEXT marquees, gradient text-shimmer, and
+   CTA shimmer sweeps are codified AI-design tells (see the anti-slop field
+   guide in the hub). Don't reintroduce them.
+   The product rail below is the sanctioned exception (Neil, 2026-07-24):
+   it scrolls real catalog items, pauses on hover/focus, and degrades to a
+   swipeable strip under reduced motion. */
+.ticker-viewport { overflow: hidden; }
+.ticker { animation: ticker-scroll 55s linear infinite; }
+.ticker:hover,
+.ticker:focus-within { animation-play-state: paused; }
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker { animation: none; }
+  .ticker-viewport { overflow-x: auto; }
+}
 
 /* Link underline that draws itself left→right */
 .link-line {

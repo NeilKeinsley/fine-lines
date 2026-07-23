@@ -5,10 +5,19 @@ import { GarmentArt } from "./garment-art";
 import { useCart } from "@/lib/cart";
 import { peso, SIZES, type Product, type Size } from "@/lib/products";
 
-export function ProductCard({ product, fig }: { product: Product; fig: number }) {
+interface ProductCardProps {
+  product: Product;
+  /** Plate number in the site's "Fig. NN" system (from Catalog.figNumber). */
+  fig: string;
+}
+
+export function ProductCard({ product, fig }: ProductCardProps) {
   const add = useCart((s) => s.add);
   const openCart = useCart((s) => s.open);
   const [added, setAdded] = useState<Size | null>(null);
+  // Hover reveals the size panel on desktop; on touch there is no hover, so
+  // tapping the artwork toggles it instead.
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   const handleAdd = (size: Size) => {
     add(product.id, size);
@@ -33,14 +42,25 @@ export function ProductCard({ product, fig }: { product: Product; fig: number })
 
       <div className="relative flex aspect-[4/5] items-center justify-center overflow-hidden">
         <span className="absolute right-4 top-4 text-[10px] tracking-[0.18em] uppercase text-muted">
-          Fig. {String(fig).padStart(2, "0")}
+          Fig. {fig}
         </span>
-        <GarmentArt
-          type={product.garment}
-          className="h-3/4 w-auto text-foreground transition-transform duration-500 [transition-timing-function:var(--ease-spring)] group-hover:scale-[1.06]"
-        />
-        {/* size picker slides up on hover; choosing a size adds it */}
-        <div className="absolute inset-x-0 bottom-0 translate-y-full bg-foreground text-background transition-transform duration-300 [transition-timing-function:var(--ease-spring)] group-hover:translate-y-0 focus-within:translate-y-0">
+        <button
+          type="button"
+          aria-label={`Choose a size for ${product.name}`}
+          onClick={() => setPickerOpen((v) => !v)}
+          className="flex h-full w-full items-center justify-center cursor-pointer"
+        >
+          <GarmentArt
+            type={product.garment}
+            className="h-3/4 w-auto text-foreground transition-transform duration-500 [transition-timing-function:var(--ease-spring)] group-hover:scale-[1.06]"
+          />
+        </button>
+        {/* size picker: slides up on hover (desktop) or tap (touch) */}
+        <div
+          className={`absolute inset-x-0 bottom-0 bg-foreground text-background transition-transform duration-300 [transition-timing-function:var(--ease-spring)] group-hover:translate-y-0 focus-within:translate-y-0 ${
+            pickerOpen ? "translate-y-0" : "translate-y-full"
+          }`}
+        >
           <p className="pt-2.5 text-center text-[10px] tracking-[0.2em] uppercase opacity-70">
             {added ? `In the bag, size ${added}` : "Pick a size"}
           </p>
@@ -50,7 +70,7 @@ export function ProductCard({ product, fig }: { product: Product; fig: number })
                 key={size}
                 type="button"
                 onClick={() => handleAdd(size)}
-                className="min-w-9 rounded-full border border-background/30 px-2 py-1 text-[12px] hover:bg-background hover:text-foreground transition-colors duration-200 cursor-pointer"
+                className="min-w-9 rounded-full border border-background/30 px-2 py-1.5 text-[12px] hover:bg-background hover:text-foreground transition-colors duration-200 cursor-pointer"
               >
                 {size}
               </button>

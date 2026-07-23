@@ -1,13 +1,6 @@
 import { GarmentArt } from "./garment-art";
 import { Reveal } from "./reveal";
 
-const STRIP = [
-  "The Tailored Line, SS26",
-  "Free shipping over ₱2,995",
-  "GCash · Maya · QR Ph · Cards",
-  "Sewn in small runs in Manila",
-];
-
 export function Hero() {
   return (
     <section className="relative overflow-hidden">
@@ -76,16 +69,6 @@ export function Hero() {
         </Reveal>
       </div>
 
-      {/* static USP strip on hairlines — deliberately not a marquee */}
-      <div className="border-y border-line">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-1 px-5 py-3 sm:justify-between sm:px-8">
-          {STRIP.map((t) => (
-            <span key={t} className="text-[11px] tracking-[0.2em] uppercase text-muted">
-              {t}
-            </span>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }

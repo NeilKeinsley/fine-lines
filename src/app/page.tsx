@@ -1,5 +1,6 @@
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
+import { ProductTicker } from "@/components/product-ticker";
 import { ProductGrid } from "@/components/product-grid";
 import { Craft } from "@/components/craft";
 import { Faq } from "@/components/faq";
@@ -12,6 +13,7 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         <Hero />
+        <ProductTicker />
         <ProductGrid />
         <Craft />
         <Faq />

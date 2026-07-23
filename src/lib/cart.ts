@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { PRODUCTS, type Product, type Size } from "./products";
+import type { Size } from "./products";
 
 export interface CartLine {
   productId: string;
@@ -65,17 +65,5 @@ export const useCart = create<CartState>()(
   )
 );
 
-export function cartProduct(line: CartLine): Product | undefined {
-  return PRODUCTS.find((p) => p.id === line.productId);
-}
-
-export function cartCount(lines: CartLine[]): number {
-  return lines.reduce((n, l) => n + l.qty, 0);
-}
-
-export function cartSubtotal(lines: CartLine[]): number {
-  return lines.reduce((n, l) => {
-    const p = cartProduct(l);
-    return n + (p ? p.price * l.qty : 0);
-  }, 0);
-}
+/* Money/quantity math lives in Bag (src/lib/bag.ts) — construct one from
+   `lines` instead of computing totals in components. */

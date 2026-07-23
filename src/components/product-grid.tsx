@@ -3,14 +3,11 @@
 import { useState } from "react";
 import { ProductCard } from "./product-card";
 import { Reveal } from "./reveal";
-import { CATEGORIES, PRODUCTS, type Category } from "@/lib/products";
-
-type Filter = "All" | Category;
+import { catalog, type CategoryFilter } from "@/lib/catalog";
 
 export function ProductGrid() {
-  const [filter, setFilter] = useState<Filter>("All");
-  const shown =
-    filter === "All" ? PRODUCTS : PRODUCTS.filter((p) => p.category === filter);
+  const [filter, setFilter] = useState<CategoryFilter>("All");
+  const shown = catalog.byCategory(filter);
 
   return (
     <section id="shop" className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:py-24">
@@ -26,7 +23,7 @@ export function ProductGrid() {
             </h2>
           </div>
           <div className="flex flex-wrap gap-2">
-            {(["All", ...CATEGORIES] as Filter[]).map((c) => (
+            {(["All", ...catalog.categories()] as CategoryFilter[]).map((c) => (
               <button
                 key={c}
                 type="button"
@@ -45,10 +42,9 @@ export function ProductGrid() {
       </Reveal>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {shown.map((p, i) => (
-          <Reveal key={p.id} delay={(i % 4) * 90}>
-            {/* Fig. 01 is the hero coat; cards continue the numbering from the full catalog */}
-            <ProductCard product={p} fig={PRODUCTS.indexOf(p) + 2} />
+        {shown.map((product, i) => (
+          <Reveal key={product.id} delay={(i % 4) * 90}>
+            <ProductCard product={product} fig={catalog.figNumber(product)} />
           </Reveal>
         ))}
       </div>

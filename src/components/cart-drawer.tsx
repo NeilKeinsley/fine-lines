@@ -2,17 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { GarmentArt } from "./garment-art";
-import { useCart, cartProduct, cartSubtotal, cartCount } from "@/lib/cart";
+import { useCart } from "@/lib/cart";
+import { Bag } from "@/lib/bag";
 import { peso } from "@/lib/products";
-
-const FREE_SHIP_AT = 2995;
 
 export function CartDrawer() {
   const { lines, isOpen, close, setQty, remove } = useCart();
   const [checkoutNote, setCheckoutNote] = useState(false);
-  const subtotal = cartSubtotal(lines);
-  const count = cartCount(lines);
-  const toFree = Math.max(0, FREE_SHIP_AT - subtotal);
+  const bag = new Bag(lines);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
@@ -47,7 +44,7 @@ export function CartDrawer() {
         <header className="flex items-center justify-between border-b border-line px-6 py-5">
           <h2 className="font-display text-xl italic">
             Your bag{" "}
-            <span className="not-italic text-sm text-muted">({count})</span>
+            <span className="not-italic text-sm text-muted">({bag.count})</span>
           </h2>
           <button
             type="button"
@@ -64,20 +61,20 @@ export function CartDrawer() {
         {/* free-shipping meter — a literal fine line */}
         <div className="border-b border-line px-6 py-3">
           <p className="text-[11px] tracking-[0.14em] uppercase text-muted">
-            {toFree > 0
-              ? `${peso(toFree)} more and shipping's on us`
+            {bag.amountToFreeShipping > 0
+              ? `${peso(bag.amountToFreeShipping)} more and shipping's on us`
               : "Shipping's on us"}
           </p>
           <div className="mt-2 h-px w-full bg-line">
             <div
               className="h-px bg-accent transition-all duration-700 [transition-timing-function:var(--ease-spring)]"
-              style={{ width: `${Math.min(100, (subtotal / FREE_SHIP_AT) * 100)}%` }}
+              style={{ width: `${bag.freeShippingProgress}%` }}
             />
           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto px-6">
-          {lines.length === 0 ? (
+          {bag.isEmpty ? (
             <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
               <GarmentArt type="tee" className="h-28 w-auto text-line-strong" />
               <p className="font-display text-lg italic">Your bag is empty.</p>
@@ -92,7 +89,7 @@ export function CartDrawer() {
           ) : (
             <ul>
               {lines.map((line) => {
-                const p = cartProduct(line);
+                const p = bag.product(line);
                 if (!p) return null;
                 return (
                   <li
@@ -146,11 +143,11 @@ export function CartDrawer() {
           )}
         </div>
 
-        {lines.length > 0 && (
+        {!bag.isEmpty && (
           <footer className="border-t border-line px-6 py-5">
             <div className="mb-1 flex items-center justify-between text-sm">
               <span className="text-muted">Subtotal</span>
-              <span className="font-medium">{peso(subtotal)}</span>
+              <span className="font-medium">{peso(bag.subtotal)}</span>
             </div>
             <p className="mb-4 text-[11px] text-muted">
               Shipping &amp; taxes calculated at checkout.
@@ -160,7 +157,7 @@ export function CartDrawer() {
               className="w-full rounded-full bg-foreground py-3.5 text-sm text-background hover:scale-[1.02] transition-transform duration-300 [transition-timing-function:var(--ease-spring)] cursor-pointer"
               onClick={() => setCheckoutNote(true)}
             >
-              Checkout · {peso(subtotal)}
+              Checkout · {peso(bag.subtotal)}
             </button>
             {checkoutNote && (
               <p className="mt-3 border border-line bg-card px-4 py-3 text-xs leading-relaxed text-muted">
