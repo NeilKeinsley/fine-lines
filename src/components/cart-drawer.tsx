@@ -9,7 +9,34 @@ import { peso } from "@/lib/products";
 export function CartDrawer() {
   const { lines, isOpen, close, setQty, remove } = useCart();
   const [checkoutNote, setCheckoutNote] = useState(false);
+  const [checkingOut, setCheckingOut] = useState(false);
   const bag = new Bag(lines);
+
+  // POSTs the bag to /api/checkout; the server recomputes prices and answers
+  // with the hosted PayMongo page, or 503 while payments aren't configured.
+  const startCheckout = async () => {
+    setCheckingOut(true);
+    setCheckoutNote(false);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lines: lines.map(({ productId, size, qty }) => ({ productId, size, qty })),
+        }),
+      });
+      if (res.ok) {
+        const { url } = await res.json();
+        window.location.assign(url);
+        return;
+      }
+      setCheckoutNote(true);
+    } catch {
+      setCheckoutNote(true);
+    } finally {
+      setCheckingOut(false);
+    }
+  };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
@@ -154,10 +181,11 @@ export function CartDrawer() {
             </p>
             <button
               type="button"
-              className="w-full rounded-full bg-foreground py-3.5 text-sm text-background hover:scale-[1.02] transition-transform duration-300 [transition-timing-function:var(--ease-spring)] cursor-pointer"
-              onClick={() => setCheckoutNote(true)}
+              disabled={checkingOut}
+              className="w-full rounded-full bg-foreground py-3.5 text-sm text-background hover:scale-[1.02] transition-transform duration-300 [transition-timing-function:var(--ease-spring)] cursor-pointer disabled:opacity-60"
+              onClick={startCheckout}
             >
-              Checkout · {peso(bag.subtotal)}
+              {checkingOut ? "Opening checkout…" : `Checkout · ${peso(bag.subtotal)}`}
             </button>
             {checkoutNote && (
               <p className="mt-3 border border-line bg-card px-4 py-3 text-xs leading-relaxed text-muted">
