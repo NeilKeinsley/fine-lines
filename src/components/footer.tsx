@@ -15,8 +15,8 @@ export function Footer() {
             <p className="font-display text-2xl font-semibold italic tracking-tight">Fine Lines</p>
             <p className="mt-1 text-[10px] tracking-[0.22em] uppercase text-muted">Created by Neil</p>
             <p className="mt-5 max-w-xs text-sm leading-relaxed text-muted">
-              An editorial clothing store. Every piece begins as a line — we
-              keep the ones worth keeping.
+              A small clothing label out of Manila. Drawn on paper first,
+              sewn in short runs.
             </p>
             <form className="mt-6 flex max-w-xs items-center border-b border-line-strong focus-within:border-accent transition-colors duration-300">
               <input
@@ -57,7 +57,7 @@ export function Footer() {
       <div className="border-t border-line">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-5 text-[11px] tracking-[0.14em] uppercase text-muted sm:px-8">
           <p>
-            © 2026 Fine Lines — <span className="text-accent">Created by Neil</span>
+            © 2026 Fine Lines · <span className="text-accent">Created by Neil</span>
           </p>
           <p>Visa · Mastercard · GCash · Maya · QR Ph</p>
         </div>

@@ -69,8 +69,8 @@ export function CartDrawer() {
         <div className="border-b border-line px-6 py-3">
           <p className="text-[11px] tracking-[0.14em] uppercase text-muted">
             {toFree > 0
-              ? `${peso(toFree)} away from free shipping`
-              : "Free shipping unlocked ✓"}
+              ? `${peso(toFree)} more and shipping's on us`
+              : "Shipping's on us ✓"}
           </p>
           <div className="mt-2 h-px w-full bg-line">
             <div
@@ -162,11 +162,11 @@ export function CartDrawer() {
               className="btn-shimmer w-full rounded-full bg-foreground py-3.5 text-sm text-background hover:scale-[1.02] transition-transform duration-300 [transition-timing-function:var(--ease-spring)] cursor-pointer"
               onClick={() =>
                 alert(
-                  "Checkout is next on the roadmap: PayMongo hosted Checkout Session (cards · GCash · Maya · QR Ph). See docs/research-payments-auth-security.md"
+                  "Checkout opens soon. We're wiring up cards, GCash, Maya, and QR Ph right now."
                 )
               }
             >
-              Checkout — {peso(subtotal)}
+              Checkout · {peso(subtotal)}
             </button>
             <p className="mt-3 text-center text-[10px] tracking-[0.14em] uppercase text-muted">
               Visa · Mastercard · GCash · Maya · QR Ph

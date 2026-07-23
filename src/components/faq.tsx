@@ -3,19 +3,19 @@ import { Reveal } from "./reveal";
 const QA = [
   {
     q: "How do I pay?",
-    a: "We accept Visa and Mastercard, GCash, Maya, and QR Ph bank transfers. Payments run through a hosted, PCI-compliant checkout — your card details never touch our servers, and card payments are protected with 3-D Secure.",
+    a: "Visa, Mastercard, GCash, Maya, or a QR Ph bank transfer. Checkout runs on a PCI-compliant payment page, so your card details never touch our servers. Card payments go through 3-D Secure.",
   },
   {
     q: "Do I need an account to order?",
-    a: "No — guest checkout is always available. An account simply keeps your order history, saved details, and bookmarked pieces in one place.",
+    a: "No. Guest checkout is always open. An account just keeps your order history and saved details in one place if you want that.",
   },
   {
     q: "What about shipping?",
-    a: "Free nationwide shipping on orders over ₱2,995. Metro Manila arrives in 1–3 days; provincial orders in 3–7. Tracking lands in your inbox the moment your parcel leaves the studio.",
+    a: "Free nationwide over ₱2,995. Metro Manila usually lands in 1 to 3 days, provincial in 3 to 7. You get a tracking link the moment the parcel leaves the studio.",
   },
   {
     q: "Returns and exchanges?",
-    a: "30 days, no drama. Unworn pieces with tags can be returned or exchanged — start it from your order email and we'll arrange the pickup.",
+    a: "You have 30 days. If it's unworn with tags still on, send it back or swap the size. Start from your order email and we'll book the pickup.",
   },
 ];
 

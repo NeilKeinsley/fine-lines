@@ -2,10 +2,10 @@ import { GarmentArt } from "./garment-art";
 import { Reveal } from "./reveal";
 
 const TICKER = [
-  "The Tailored Line — SS26",
+  "The Tailored Line, SS26",
   "Free shipping over ₱2,995",
   "GCash · Maya · QR Ph · Cards",
-  "Drawn, cut, and sewn to last",
+  "Sewn in small runs in Manila",
 ];
 
 export function Hero() {
@@ -28,7 +28,7 @@ export function Hero() {
           <Reveal delay={0}>
             <p className="mb-5 flex items-center gap-3 text-[11px] tracking-[0.24em] uppercase text-muted">
               <span className="inline-block h-px w-10 bg-accent" />
-              Spring / Summer ’26 — The Tailored Line
+              Spring / Summer ’26 · The Tailored Line
             </p>
           </Reveal>
           <Reveal delay={120}>
@@ -40,9 +40,8 @@ export function Hero() {
           </Reveal>
           <Reveal delay={240}>
             <p className="mt-6 max-w-md text-[15px] leading-relaxed text-muted">
-              Every piece begins as a line on paper. We keep the ones worth
-              keeping — precise silhouettes, honest cloth, seams that outlive
-              seasons.
+              Every piece here started as a pencil line on pattern paper.
+              Most sketches never make it past the table. These did.
             </p>
           </Reveal>
           <Reveal delay={360}>
@@ -70,7 +69,7 @@ export function Hero() {
             <span className="absolute -bottom-px -right-px h-5 w-5 border-b border-r border-accent" />
             <GarmentArt type="coat" autodraw className="mx-auto h-80 w-auto text-foreground" />
             <figcaption className="mt-4 flex items-baseline justify-between border-t border-line pt-4 text-[11px] tracking-[0.18em] uppercase text-muted">
-              <span>Fig. 01 — Duster Coat</span>
+              <span>Fig. 01 · Duster Coat</span>
               <span className="text-accent">₱6,750</span>
             </figcaption>
           </figure>

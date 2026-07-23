@@ -132,9 +132,8 @@ export default function LoginPage() {
 
                 {sent && (
                   <p className="border border-line bg-card px-4 py-3 text-xs leading-relaxed text-muted">
-                    Auth backend lands next sprint (Better Auth — self-hosted
-                    sessions, Google sign-in, guest checkout stays available).
-                    Nothing was submitted.
+                    Accounts open soon. Nothing was submitted, and you can
+                    already shop without one.
                   </p>
                 )}
 
@@ -167,7 +166,7 @@ export default function LoginPage() {
               </button>
 
               <p className="mt-6 text-center text-xs leading-relaxed text-muted">
-                No account needed to shop — guest checkout is always available.
+                You can shop without an account. Guest checkout is always open.
               </p>
             </div>
           </Reveal>
@@ -175,7 +174,7 @@ export default function LoginPage() {
       </main>
 
       <footer className="border-t border-line py-4 text-center text-[11px] tracking-[0.14em] uppercase text-muted">
-        © 2026 Fine Lines — <span className="text-accent">Created by Neil</span>
+        © 2026 Fine Lines · <span className="text-accent">Created by Neil</span>
       </footer>
     </div>
   );
