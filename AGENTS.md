@@ -6,7 +6,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # Fine Lines — storefront repo
 
-Editorial e-commerce clothing store (placeholder catalog). Part of the Rev-Box **Web Integrations** knowledge base — hub artifacts live in `D:\Work Files\Rev-Box\Web Integrations\clients\fine-lines\` (checklist, worklog, research, evidence).
+**Neil's personal portfolio + learning project**: an editorial e-commerce clothing store built to demonstrate every e-commerce function done properly. NOT a real commerce business — payments stay in test mode permanently, the catalog is a designed fiction, and the audience is someone evaluating the craft. Part of the Rev-Box **Web Integrations** knowledge base — hub artifacts live in `D:\Work Files\Rev-Box\Web Integrations\clients\fine-lines\` (checklist, worklog, research, evidence; current roadmap: `beat-shopify-plan.md` v3, the "syllabus").
 
 ## Stack
 - Next.js 16 (App Router) + React 19 + TypeScript + Tailwind v4 (`@theme inline` tokens in `src/app/globals.css`)
