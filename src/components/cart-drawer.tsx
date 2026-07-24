@@ -13,8 +13,8 @@ export function CartDrawer() {
   const bag = new Bag(lines);
 
   // POSTs the bag to /api/checkout; the server recomputes prices and answers
-  // with the hosted PayMongo page, or 503 while payments aren't configured.
-  const startCheckout = async () => {
+  // with the chosen gateway's hosted page, or 503 while it isn't configured.
+  const startCheckout = async (provider: "paymongo" | "paypal") => {
     setCheckingOut(true);
     setCheckoutNote(false);
     try {
@@ -22,6 +22,7 @@ export function CartDrawer() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          provider,
           lines: lines.map(({ productId, size, qty }) => ({ productId, size, qty })),
         }),
       });
@@ -183,9 +184,17 @@ export function CartDrawer() {
               type="button"
               disabled={checkingOut}
               className="w-full rounded-full bg-foreground py-3.5 text-sm text-background hover:scale-[1.02] transition-transform duration-300 [transition-timing-function:var(--ease-spring)] cursor-pointer disabled:opacity-60"
-              onClick={startCheckout}
+              onClick={() => startCheckout("paymongo")}
             >
               {checkingOut ? "Opening checkout…" : `Checkout · ${money(bag.subtotal)}`}
+            </button>
+            <button
+              type="button"
+              disabled={checkingOut}
+              className="mt-2 w-full rounded-full border border-line py-3 text-sm hover:border-line-strong transition-colors duration-300 cursor-pointer disabled:opacity-60"
+              onClick={() => startCheckout("paypal")}
+            >
+              Pay with PayPal
             </button>
             {checkoutNote && (
               <p className="mt-3 border border-line bg-card px-4 py-3 text-xs leading-relaxed text-muted">

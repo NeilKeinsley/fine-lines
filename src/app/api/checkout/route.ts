@@ -3,9 +3,13 @@ import { z } from "zod";
 import { catalog } from "@/lib/catalog";
 import { SIZES } from "@/lib/products";
 import { paymongo } from "@/lib/payments/paymongo";
+import { paypal } from "@/lib/payments/paypal";
 import { orderStore } from "@/lib/orders";
 import { RateLimiter, clientKey } from "@/lib/rate-limit";
-import type { CheckoutItem } from "@/lib/payments/provider";
+import type { CheckoutItem, PaymentProvider } from "@/lib/payments/provider";
+
+/** Gateways the shopper can pick in the bag drawer. */
+const PROVIDERS: Record<string, PaymentProvider> = { paymongo, paypal };
 
 /* 10 checkout attempts per IP per 5 minutes — generous for a real shopper,
    hostile to session-spam (each request creates a PayMongo session). */
@@ -21,6 +25,7 @@ const limiter = new RateLimiter(10, 5 * 60 * 1000);
  */
 
 const checkoutSchema = z.object({
+  provider: z.enum(["paymongo", "paypal"]).default("paymongo"),
   lines: z
     .array(
       z.object({
@@ -42,13 +47,6 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!paymongo.isConfigured()) {
-    return NextResponse.json(
-      { error: "payments_not_configured" },
-      { status: 503 }
-    );
-  }
-
   let parsed;
   try {
     parsed = checkoutSchema.safeParse(await request.json());
@@ -57,6 +55,14 @@ export async function POST(request: Request) {
   }
   if (!parsed.success) {
     return NextResponse.json({ error: "invalid_request" }, { status: 400 });
+  }
+
+  const provider = PROVIDERS[parsed.data.provider];
+  if (!provider.isConfigured()) {
+    return NextResponse.json(
+      { error: "payments_not_configured" },
+      { status: 503 }
+    );
   }
 
   const items: CheckoutItem[] = [];
@@ -77,7 +83,7 @@ export async function POST(request: Request) {
   const referenceNumber = `FL-${Date.now().toString(36).toUpperCase()}`;
 
   try {
-    const session = await paymongo.createCheckoutSession(items, referenceNumber);
+    const session = await provider.createCheckoutSession(items, referenceNumber);
     await orderStore.createPending(
       session,
       referenceNumber,
