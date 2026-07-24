@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { catalog } from "@/lib/catalog";
+import { RateLimiter, clientKey } from "@/lib/rate-limit";
+
+/* 20 rating submissions per IP per 5 minutes. */
+const limiter = new RateLimiter(20, 5 * 60 * 1000);
 
 /*
  * Rating submissions are for registered users only. Auth (Better Auth) is
@@ -14,6 +18,14 @@ const ratingSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const rate = limiter.check(clientKey(request));
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { error: "too_many_requests" },
+      { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+    );
+  }
+
   let parsed;
   try {
     parsed = ratingSchema.safeParse(await request.json());

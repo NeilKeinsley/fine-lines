@@ -4,7 +4,12 @@ import { catalog } from "@/lib/catalog";
 import { SIZES } from "@/lib/products";
 import { paymongo } from "@/lib/payments/paymongo";
 import { orderStore } from "@/lib/orders";
+import { RateLimiter, clientKey } from "@/lib/rate-limit";
 import type { CheckoutItem } from "@/lib/payments/provider";
+
+/* 10 checkout attempts per IP per 5 minutes — generous for a real shopper,
+   hostile to session-spam (each request creates a PayMongo session). */
+const limiter = new RateLimiter(10, 5 * 60 * 1000);
 
 /*
  * Creates a hosted checkout session from the shopper's bag.
@@ -29,6 +34,14 @@ const checkoutSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const rate = limiter.check(clientKey(request));
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { error: "too_many_requests" },
+      { status: 429, headers: { "Retry-After": String(rate.retryAfterSeconds) } }
+    );
+  }
+
   if (!paymongo.isConfigured()) {
     return NextResponse.json(
       { error: "payments_not_configured" },
