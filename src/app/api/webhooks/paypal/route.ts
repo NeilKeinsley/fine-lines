@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { paypal } from "@/lib/payments/paypal";
 import { orderStore } from "@/lib/orders";
+import { inventoryStore } from "@/lib/inventory";
 
 /*
  * PayPal webhook — redundant confirmation path behind the return-capture.
@@ -39,11 +40,12 @@ export async function POST(request: Request) {
     const orderId = event.resource?.supplementary_data?.related_ids?.order_id;
     if (orderId) {
       const reference = await orderStore.markPaid(orderId);
-      console.log(
-        reference
-          ? `[paypal webhook] order ${reference} paid (${orderId})`
-          : `[paypal webhook] capture for unknown order ${orderId}`
-      );
+      if (reference) {
+        await inventoryStore.decrementForPaidOrder(orderId);
+        console.log(`[paypal webhook] order ${reference} paid, stock decremented`);
+      } else {
+        console.log(`[paypal webhook] ${orderId}: duplicate or unknown`);
+      }
     }
   }
 

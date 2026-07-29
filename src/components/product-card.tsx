@@ -5,28 +5,37 @@ import { useEffect, useState } from "react";
 import { GarmentArt } from "./garment-art";
 import { useWishlist } from "@/lib/wishlist";
 import { useQuickView } from "@/lib/quick-view";
-import { money, type Product } from "@/lib/products";
+import { useStock } from "@/lib/use-stock";
+import { money, SIZES, type Product } from "@/lib/products";
 
 export function ProductCard({ product }: { product: Product }) {
   const toggleSaved = useWishlist((s) => s.toggle);
   const savedIds = useWishlist((s) => s.ids);
   const openQuickView = useQuickView((s) => s.open);
+  const stock = useStock()?.[product.id] ?? null;
+  const soldOut = stock !== null && SIZES.every((s) => stock[s]?.n === 0);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const saved = mounted && savedIds.includes(product.id);
 
   return (
     <article className="group relative flex flex-col border border-line bg-card transition-all duration-300 [transition-timing-function:var(--ease-spring)] hover:-translate-y-1.5 hover:border-line-strong hover:shadow-[0_18px_40px_-20px_rgb(0_0_0/0.25)]">
-      {product.badge && (
-        <span
-          className={`absolute left-4 top-4 z-10 px-2.5 py-1 text-[10px] tracking-[0.18em] uppercase ${
-            product.badge === "Sale"
-              ? "bg-accent text-accent-contrast"
-              : "border border-line-strong text-muted"
-          }`}
-        >
-          {product.badge}
+      {soldOut ? (
+        <span className="absolute left-4 top-4 z-10 border border-line-strong px-2.5 py-1 text-[10px] tracking-[0.18em] uppercase text-muted">
+          Sold out
         </span>
+      ) : (
+        product.badge && (
+          <span
+            className={`absolute left-4 top-4 z-10 px-2.5 py-1 text-[10px] tracking-[0.18em] uppercase ${
+              product.badge === "Sale"
+                ? "bg-accent text-accent-contrast"
+                : "border border-line-strong text-muted"
+            }`}
+          >
+            {product.badge}
+          </span>
+        )
       )}
 
       <div className="relative flex aspect-[4/5] items-center justify-center overflow-hidden">
@@ -60,7 +69,9 @@ export function ProductCard({ product }: { product: Product }) {
         >
           <GarmentArt
             type={product.garment}
-            className="h-3/4 w-auto text-foreground transition-transform duration-500 [transition-timing-function:var(--ease-spring)] group-hover:scale-[1.06]"
+            className={`h-3/4 w-auto text-foreground transition-transform duration-500 [transition-timing-function:var(--ease-spring)] group-hover:scale-[1.06] ${
+              soldOut ? "opacity-40" : ""
+            }`}
           />
         </button>
       </div>

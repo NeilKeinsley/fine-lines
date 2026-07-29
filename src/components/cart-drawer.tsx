@@ -4,11 +4,14 @@ import { useEffect, useState } from "react";
 import { GarmentArt } from "./garment-art";
 import { useCart } from "@/lib/cart";
 import { Bag } from "@/lib/bag";
+import { catalog } from "@/lib/catalog";
 import { money } from "@/lib/products";
+import type { Shortfall } from "@/lib/inventory";
 
 export function CartDrawer() {
   const { lines, isOpen, close, setQty, remove } = useCart();
   const [checkoutNote, setCheckoutNote] = useState(false);
+  const [stockIssues, setStockIssues] = useState<Shortfall[] | null>(null);
   const [checkingOut, setCheckingOut] = useState(false);
   const bag = new Bag(lines);
 
@@ -17,6 +20,7 @@ export function CartDrawer() {
   const startCheckout = async (provider: "paymongo" | "paypal") => {
     setCheckingOut(true);
     setCheckoutNote(false);
+    setStockIssues(null);
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
@@ -29,6 +33,11 @@ export function CartDrawer() {
       if (res.ok) {
         const { url } = await res.json();
         window.location.assign(url);
+        return;
+      }
+      if (res.status === 409) {
+        const body = await res.json();
+        setStockIssues(body.details ?? []);
         return;
       }
       setCheckoutNote(true);
@@ -202,6 +211,22 @@ export function CartDrawer() {
                 Mastercard, PayPal, and QR Ph now, and your bag will keep
                 everything saved until launch.
               </p>
+            )}
+            {stockIssues && stockIssues.length > 0 && (
+              <div className="mt-3 border border-accent/40 bg-card px-4 py-3 text-xs leading-relaxed text-muted">
+                <p className="mb-1 text-accent">Not enough stock:</p>
+                {stockIssues.map((issue) => {
+                  const name =
+                    catalog.find(issue.productId)?.name ?? issue.productId;
+                  return (
+                    <p key={`${issue.productId}-${issue.size}`}>
+                      {name} ({issue.size}) — only {issue.have} left, bag has{" "}
+                      {issue.want}
+                    </p>
+                  );
+                })}
+                <p className="mt-1">Adjust the quantities above to continue.</p>
+              </div>
             )}
             <p className="mt-3 text-center text-[10px] tracking-[0.14em] uppercase text-muted">
               Visa · Mastercard · PayPal · QR Ph

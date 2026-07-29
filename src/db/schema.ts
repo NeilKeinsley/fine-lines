@@ -1,6 +1,11 @@
+import { sql } from "drizzle-orm";
 import {
+  boolean,
+  check,
   integer,
+  pgEnum,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   unique,
@@ -28,6 +33,8 @@ export const orders = pgTable("orders", {
   chargedPhpCentavos: integer("charged_php_centavos").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   paidAt: timestamp("paid_at", { withTimezone: true }),
+  /** Set when a paid order lost the stock race — needs manual resolution. */
+  stockIssue: boolean("stock_issue").notNull().default(false),
 });
 
 export const orderItems = pgTable("order_items", {
@@ -46,6 +53,40 @@ export const orderItems = pgTable("order_items", {
 export const processedEvents = pgTable("processed_events", {
   id: text("id").primaryKey(), // the gateway's event id
   receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Per-size stock. The CHECK constraint is the last line of oversell defense. */
+export const inventory = pgTable(
+  "inventory",
+  {
+    productId: text("product_id").notNull(),
+    size: text("size").notNull(),
+    stock: integer("stock").notNull(),
+    lowStockThreshold: integer("low_stock_threshold").notNull().default(3),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.productId, t.size] }),
+    check("stock_non_negative", sql`${t.stock} >= 0`),
+  ]
+);
+
+export const movementReason = pgEnum("movement_reason", [
+  "seed",
+  "order_paid",
+  "manual_adjust",
+  "restock",
+]);
+
+/** Audit ledger: every unit of stock change is accounted for. */
+export const stockMovements = pgTable("stock_movements", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  productId: text("product_id").notNull(),
+  size: text("size").notNull(),
+  delta: integer("delta").notNull(), // negative = sold
+  reason: movementReason("reason").notNull(),
+  orderRef: text("order_ref"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 /**

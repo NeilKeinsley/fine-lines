@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { paymongo } from "@/lib/payments/paymongo";
 import { orderStore } from "@/lib/orders";
+import { inventoryStore } from "@/lib/inventory";
 
 /*
  * PayMongo webhook receiver — the ONLY place an order is confirmed paid
@@ -44,11 +45,13 @@ export async function POST(request: Request) {
       const sessionId = event.data?.attributes?.data?.id;
       if (sessionId) {
         const reference = await orderStore.markPaid(sessionId);
-        console.log(
-          reference
-            ? `[webhook] order ${reference} paid (session ${sessionId})`
-            : `[webhook] paid session ${sessionId} matched no order`
-        );
+        if (reference) {
+          // Exactly-once by construction: markPaid only returns on transition.
+          await inventoryStore.decrementForPaidOrder(sessionId);
+          console.log(`[webhook] order ${reference} paid, stock decremented`);
+        } else {
+          console.log(`[webhook] session ${sessionId}: duplicate or unknown`);
+        }
       }
       break;
     }

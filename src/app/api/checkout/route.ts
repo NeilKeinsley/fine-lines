@@ -5,6 +5,7 @@ import { SIZES } from "@/lib/products";
 import { paymongo } from "@/lib/payments/paymongo";
 import { paypal } from "@/lib/payments/paypal";
 import { orderStore } from "@/lib/orders";
+import { inventoryStore } from "@/lib/inventory";
 import { RateLimiter, clientKey } from "@/lib/rate-limit";
 import type { CheckoutItem, PaymentProvider } from "@/lib/payments/provider";
 
@@ -78,6 +79,16 @@ export async function POST(request: Request) {
       qty: line.qty,
       unitAmount: product.price * 100, // USD cents, from the catalog only
     });
+  }
+
+  // Courtesy stock check — fail fast with details. The webhook-time atomic
+  // decrement remains the real enforcement.
+  const availability = await inventoryStore.checkAvailability(parsed.data.lines);
+  if (!availability.ok) {
+    return NextResponse.json(
+      { error: "insufficient_stock", details: availability.insufficient },
+      { status: 409 }
+    );
   }
 
   const referenceNumber = `FL-${Date.now().toString(36).toUpperCase()}`;

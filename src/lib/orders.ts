@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { orders, orderItems, processedEvents } from "@/db/schema";
 import type { CheckoutItem, CheckoutSession } from "./payments/provider";
@@ -47,7 +47,11 @@ export class OrderStore {
     );
   }
 
-  /** Idempotent: returns the order it marked, or null if none matched. */
+  /**
+   * Marks the pending→paid TRANSITION only: returns the reference exactly
+   * once per order (null on re-delivery or unknown ref). Callers gate the
+   * inventory decrement on this, which makes it naturally idempotent.
+   */
   async markPaid(providerRef: string): Promise<string | null> {
     const db = getDb();
     if (!db) {
@@ -57,9 +61,20 @@ export class OrderStore {
     const [updated] = await db
       .update(orders)
       .set({ status: "paid", paidAt: new Date() })
-      .where(eq(orders.providerRef, providerRef))
+      .where(and(eq(orders.providerRef, providerRef), eq(orders.status, "pending")))
       .returning({ referenceNumber: orders.referenceNumber });
     return updated?.referenceNumber ?? null;
+  }
+
+  /** Reference lookup regardless of status (e.g. redirect after a webhook won). */
+  async referenceFor(providerRef: string): Promise<string | null> {
+    const db = getDb();
+    if (!db) return null;
+    const row = await db.query.orders.findFirst({
+      where: eq(orders.providerRef, providerRef),
+      columns: { referenceNumber: true },
+    });
+    return row?.referenceNumber ?? null;
   }
 
   /** True if this webhook event was already handled (DB ledger, memory fallback). */

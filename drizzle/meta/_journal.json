@@ -15,6 +15,13 @@
       "when": 1784841266939,
       "tag": "0001_dusty_eternity",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785290298982,
+      "tag": "0002_woozy_baron_zemo",
+      "breakpoints": true
     }
   ]
 }
