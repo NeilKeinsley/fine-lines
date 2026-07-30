@@ -17,6 +17,9 @@ export interface Shortfall {
   want: number;
 }
 
+/** Thrown by adjust() on invalid input or a below-zero result. */
+export class InventoryError extends Error {}
+
 type Db = NonNullable<ReturnType<typeof getDb>>;
 type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];
 
@@ -203,26 +206,47 @@ export class InventoryStore {
     });
   }
 
-  /** Manual stock changes: seeding, restocks, refund adjustments. Atomic with ledger. */
+  /**
+   * Manual stock changes: seeding, restocks, refund adjustments. Atomic with
+   * the ledger. Rejects (never clamps) an adjustment that would drive stock
+   * below zero — a clamp would record a ledger delta the counter never
+   * applied, silently corrupting reconciliation. The FOR UPDATE row lock also
+   * closes the read-then-write race against a concurrent paid-webhook
+   * decrement (the "Set to" TOCTOU), so the recorded delta always equals the
+   * applied delta.
+   */
   async adjust(
     productId: string,
     size: string,
     delta: number,
     reason: "seed" | "manual_adjust" | "restock" | "refund_restock" | "oversell_correction"
   ): Promise<void> {
+    if (!Number.isInteger(delta)) {
+      throw new InventoryError(`adjust delta must be an integer, got ${delta}`);
+    }
     const db = getDb();
     if (!db) throw new Error("inventory unavailable without a database");
     await db.transaction(async (tx) => {
-      await tx
-        .insert(inventory)
-        .values({ productId, size, stock: Math.max(0, delta) })
-        .onConflictDoUpdate({
-          target: [inventory.productId, inventory.size],
-          set: {
-            stock: sql`greatest(${inventory.stock} + ${delta}, 0)`,
-            updatedAt: new Date(),
-          },
-        });
+      const [row] = await tx
+        .select({ stock: inventory.stock })
+        .from(inventory)
+        .where(and(eq(inventory.productId, productId), eq(inventory.size, size)))
+        .for("update");
+      const current = row?.stock ?? 0;
+      const next = current + delta;
+      if (next < 0) {
+        throw new InventoryError(
+          `adjust of ${delta} would drive ${productId}/${size} below zero (have ${current})`
+        );
+      }
+      if (row) {
+        await tx
+          .update(inventory)
+          .set({ stock: next, updatedAt: new Date() })
+          .where(and(eq(inventory.productId, productId), eq(inventory.size, size)));
+      } else {
+        await tx.insert(inventory).values({ productId, size, stock: next });
+      }
       await tx.insert(stockMovements).values({ productId, size, delta, reason });
     });
   }

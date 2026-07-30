@@ -118,6 +118,34 @@ async function main() {
   ]);
   assert(split.ok === false, "two 3s against stock 5 rejected as an aggregate 6");
 
+  console.log("5) adjust rejects below-zero instead of clamping (no ledger drift)");
+  await setStock(db, "M", 5);
+  await db.delete(stockMovements).where(eq(stockMovements.productId, FIXTURE));
+  let rejected = false;
+  try {
+    await inventoryStore.adjust(FIXTURE, "M", -100, "manual_adjust");
+  } catch {
+    rejected = true;
+  }
+  assert(rejected, "adjust(-100) on stock 5 threw instead of clamping");
+  assert((await stockOf(db, "M")) === 5, "stock unchanged after rejected adjust");
+  const phantom = await db
+    .select()
+    .from(stockMovements)
+    .where(eq(stockMovements.productId, FIXTURE));
+  assert(phantom.length === 0, "no phantom -100 ledger row was written");
+  // A valid restock records delta == applied.
+  await inventoryStore.adjust(FIXTURE, "M", 3, "restock");
+  assert((await stockOf(db, "M")) === 8, "valid restock applied (5 -> 8)");
+  const moves = await db
+    .select()
+    .from(stockMovements)
+    .where(eq(stockMovements.productId, FIXTURE));
+  assert(
+    moves.length === 1 && moves[0].delta === 3,
+    "ledger delta equals the applied delta"
+  );
+
   // Cleanup: test orders + movements (fixture inventory rows stay; harmless).
   const testOrders = await db.select({ id: orders.id }).from(orders).where(eq(orders.provider, "test"));
   for (const o of testOrders) {
