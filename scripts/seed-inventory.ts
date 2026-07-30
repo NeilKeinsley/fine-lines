@@ -15,11 +15,13 @@ async function main() {
   const db = getDb();
   if (!db) throw new Error("DATABASE_URL is not set");
 
+  // Curated-looking spread (panel note: a third of the matrix sold-out/low
+  // reads as clearance, not curation): 3 zeros and 6 lows across 60 pairs.
+  const PATTERN = [8, 12, 6, 9, 0, 7, 10, 5, 2, 11, 9, 6, 1, 8, 12, 7, 4, 10, 0, 9];
   let inserted = 0;
   for (const [pIdx, product] of PRODUCTS.entries()) {
     for (const [sIdx, size] of SIZES.entries()) {
-      // Deterministic spread 0–12 with a few zeros and ones in the mix.
-      const stock = ((pIdx * 5 + sIdx) * 7) % 13;
+      const stock = PATTERN[(pIdx * 5 + sIdx) % PATTERN.length];
       const result = await db
         .insert(inventory)
         .values({ productId: product.id, size, stock })

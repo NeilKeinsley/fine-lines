@@ -45,13 +45,15 @@ export async function POST(request: Request) {
       const sessionId = event.data?.attributes?.data?.id;
       if (sessionId) {
         const reference = await orderStore.markPaid(sessionId);
-        if (reference) {
-          // Exactly-once by construction: markPaid only returns on transition.
-          await inventoryStore.decrementForPaidOrder(sessionId);
-          console.log(`[webhook] order ${reference} paid, stock decremented`);
-        } else {
-          console.log(`[webhook] session ${sessionId}: duplicate or unknown`);
-        }
+        // Called unconditionally: it self-gates on paid + unclaimed, so a
+        // retry after a crashed decrement still completes the stock work
+        // (a throw here 500s the route and the gateway retries).
+        await inventoryStore.decrementForPaidOrder(sessionId);
+        console.log(
+          reference
+            ? `[webhook] order ${reference} paid, stock settled`
+            : `[webhook] session ${sessionId}: re-delivery, stock settlement ensured`
+        );
       }
       break;
     }

@@ -35,6 +35,12 @@ export const orders = pgTable("orders", {
   paidAt: timestamp("paid_at", { withTimezone: true }),
   /** Set when a paid order lost the stock race — needs manual resolution. */
   stockIssue: boolean("stock_issue").notNull().default(false),
+  /**
+   * Idempotency claim for the inventory decrement, independent of the paid
+   * transition: a crashed decrement leaves this NULL, so the gateway's retry
+   * re-runs it. Claimed inside the same transaction as the decrements.
+   */
+  stockDecrementedAt: timestamp("stock_decremented_at", { withTimezone: true }),
 });
 
 export const orderItems = pgTable("order_items", {
@@ -76,6 +82,8 @@ export const movementReason = pgEnum("movement_reason", [
   "order_paid",
   "manual_adjust",
   "restock",
+  "refund_restock",
+  "oversell_correction",
 ]);
 
 /** Audit ledger: every unit of stock change is accounted for. */

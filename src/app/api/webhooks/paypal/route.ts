@@ -40,12 +40,13 @@ export async function POST(request: Request) {
     const orderId = event.resource?.supplementary_data?.related_ids?.order_id;
     if (orderId) {
       const reference = await orderStore.markPaid(orderId);
-      if (reference) {
-        await inventoryStore.decrementForPaidOrder(orderId);
-        console.log(`[paypal webhook] order ${reference} paid, stock decremented`);
-      } else {
-        console.log(`[paypal webhook] ${orderId}: duplicate or unknown`);
-      }
+      // Unconditional — self-gating, retry-safe (see PayMongo route).
+      await inventoryStore.decrementForPaidOrder(orderId);
+      console.log(
+        reference
+          ? `[paypal webhook] order ${reference} paid, stock settled`
+          : `[paypal webhook] ${orderId}: re-delivery, stock settlement ensured`
+      );
     }
   }
 

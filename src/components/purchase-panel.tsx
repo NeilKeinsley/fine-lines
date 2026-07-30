@@ -73,9 +73,7 @@ export function PurchasePanel({ product, onAdd }: PurchasePanelProps) {
         </p>
       )}
       {allSoldOut && (
-        <p className="mt-2 text-xs text-muted">
-          Sold out for now. Back-in-stock alerts are coming soon.
-        </p>
+        <p className="mt-2 text-xs text-muted">Sold out for now.</p>
       )}
 
       <div className="mt-6 flex flex-wrap items-center gap-3">

@@ -75,12 +75,16 @@ async function main() {
     [{ productId: FIXTURE, name: "Race Test", size: "L", qty: 1, unitAmount: 100 }],
     0
   );
-  // Simulate the webhook handler running twice for the same event.
+  // Webhook pattern: markPaid + UNCONDITIONAL decrement, delivered twice.
+  // The stock_decremented_at claim (not the transition) provides exactly-once.
   for (let delivery = 0; delivery < 2; delivery++) {
-    const transitioned = await orderStore.markPaid(providerRef);
-    if (transitioned) await inventoryStore.decrementForPaidOrder(providerRef);
+    await orderStore.markPaid(providerRef);
+    await inventoryStore.decrementForPaidOrder(providerRef);
   }
   assert((await stockOf(db, "L")) === 4, "double delivery decremented exactly once");
+  // Crash-recovery shape: a third call is also a no-op (claim held).
+  await inventoryStore.decrementForPaidOrder(providerRef);
+  assert((await stockOf(db, "L")) === 4, "third settlement call is a no-op");
 
   console.log("3) Mixed basket: one healthy line, one short line");
   await setStock(db, "S", 3);
@@ -105,6 +109,14 @@ async function main() {
     columns: { stockIssue: true },
   });
   assert(flagged?.stockIssue === true, "order flagged with stock_issue");
+
+  console.log("4) Duplicate cart lines cannot split the availability check");
+  await setStock(db, "M", 5);
+  const split = await inventoryStore.checkAvailability([
+    { productId: FIXTURE, size: "M", qty: 3 },
+    { productId: FIXTURE, size: "M", qty: 3 },
+  ]);
+  assert(split.ok === false, "two 3s against stock 5 rejected as an aggregate 6");
 
   // Cleanup: test orders + movements (fixture inventory rows stay; harmless).
   const testOrders = await db.select({ id: orders.id }).from(orders).where(eq(orders.provider, "test"));

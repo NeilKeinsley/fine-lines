@@ -133,6 +133,10 @@ export class PayPalProvider implements PaymentProvider {
       }
     );
     if (!res.ok) {
+      const body = await res.text();
+      // A refreshed/replayed return URL re-captures an already-captured
+      // order — that's a success for our purposes, not a cancellation.
+      if (body.includes("ORDER_ALREADY_CAPTURED")) return true;
       console.error(`PayPal capture ${orderId} failed: ${res.status}`);
       return false;
     }

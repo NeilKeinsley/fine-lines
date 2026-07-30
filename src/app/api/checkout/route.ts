@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { catalog } from "@/lib/catalog";
@@ -66,8 +67,19 @@ export async function POST(request: Request) {
     );
   }
 
-  const items: CheckoutItem[] = [];
+  // Merge duplicate product+size lines: a split line must not split the
+  // availability check (two half-quantities could each pass individually).
+  const mergedLines = new Map<string, { productId: string; size: (typeof SIZES)[number]; qty: number }>();
   for (const line of parsed.data.lines) {
+    const key = `${line.productId}|${line.size}`;
+    const existing = mergedLines.get(key);
+    if (existing) existing.qty += line.qty;
+    else mergedLines.set(key, { ...line });
+  }
+  const lines = [...mergedLines.values()];
+
+  const items: CheckoutItem[] = [];
+  for (const line of lines) {
     const product = catalog.find(line.productId);
     if (!product) {
       return NextResponse.json({ error: "unknown_product" }, { status: 400 });
@@ -83,7 +95,7 @@ export async function POST(request: Request) {
 
   // Courtesy stock check — fail fast with details. The webhook-time atomic
   // decrement remains the real enforcement.
-  const availability = await inventoryStore.checkAvailability(parsed.data.lines);
+  const availability = await inventoryStore.checkAvailability(lines);
   if (!availability.ok) {
     return NextResponse.json(
       { error: "insufficient_stock", details: availability.insufficient },
@@ -91,7 +103,11 @@ export async function POST(request: Request) {
     );
   }
 
-  const referenceNumber = `FL-${Date.now().toString(36).toUpperCase()}`;
+  // Entropy suffix: Date.now() alone collides for same-millisecond checkouts.
+  const referenceNumber = `FL-${Date.now().toString(36).toUpperCase()}${crypto
+    .randomBytes(2)
+    .toString("hex")
+    .toUpperCase()}`;
 
   try {
     const session = await provider.createCheckoutSession(items, referenceNumber);

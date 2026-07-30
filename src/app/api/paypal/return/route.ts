@@ -21,14 +21,17 @@ export async function GET(request: Request) {
   try {
     const captured = await paypal.captureOrder(orderId);
     if (!captured) {
+      // The capture call can fail while the payment actually landed (timeout,
+      // or the webhook already settled it) — never tell a paid customer
+      // "cancelled" without checking our own record first.
+      const paidRef = await orderStore.paidReferenceFor(orderId);
+      if (paidRef) {
+        return NextResponse.redirect(`${origin}/checkout/success?ref=${paidRef}`);
+      }
       return NextResponse.redirect(`${origin}/checkout/cancelled`);
     }
     const transitioned = await orderStore.markPaid(orderId);
-    if (transitioned) {
-      await inventoryStore.decrementForPaidOrder(orderId);
-    }
-    // If the webhook won the race, the transition already happened there —
-    // still show the shopper their reference.
+    await inventoryStore.decrementForPaidOrder(orderId); // self-gating, retry-safe
     const reference = transitioned ?? (await orderStore.referenceFor(orderId));
     return NextResponse.redirect(
       `${origin}/checkout/success${reference ? `?ref=${reference}` : ""}`

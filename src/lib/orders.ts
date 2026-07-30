@@ -77,6 +77,18 @@ export class OrderStore {
     return row?.referenceNumber ?? null;
   }
 
+  /** Reference only if the order is already paid — the "capture failed but
+      the money actually landed" check on redirect paths. */
+  async paidReferenceFor(providerRef: string): Promise<string | null> {
+    const db = getDb();
+    if (!db) return null;
+    const row = await db.query.orders.findFirst({
+      where: and(eq(orders.providerRef, providerRef), eq(orders.status, "paid")),
+      columns: { referenceNumber: true },
+    });
+    return row?.referenceNumber ?? null;
+  }
+
   /** True if this webhook event was already handled (DB ledger, memory fallback). */
   async alreadyProcessed(eventId: string): Promise<boolean> {
     const db = getDb();
