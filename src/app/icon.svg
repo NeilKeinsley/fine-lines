@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Fine Lines">
+  <!-- FL monogram drawn as strokes, not type: no font dependency, and it
+       matches the brand's stroke-drawn identity. The accent hairline under
+       the letters is the "fine line" motif. Colours are hardcoded (dark) so
+       renderers that strip <style> still get a legible icon; the media query
+       flips it for light browser chrome. -->
+  <style>
+    @media (prefers-color-scheme: light) {
+      .bg { fill: #f7f3ec; }
+      .ink { stroke: #2b2723; }
+    }
+  </style>
+  <rect class="bg" width="32" height="32" rx="6" fill="#1f1d1a" />
+  <g class="ink" fill="none" stroke="#e9e3d7" stroke-width="2.8" stroke-linecap="square">
+    <path d="M7.5 22V7h7" />
+    <path d="M7.5 14.5h5.5" />
+    <path d="M19 7v15h5.5" />
+  </g>
+  <path d="M7.5 25.5h17" fill="none" stroke="#ee5f43" stroke-width="1.4" stroke-linecap="square" />
+</svg>
